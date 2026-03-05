@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx next build)",
+      "Bash(npx wait-on http://localhost:3000 --timeout 15000)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(curl -s \"https://ipwankmwmvbjgpinvbrk.supabase.co/rest/v1/vehicules?select=*&limit=0\" -H \"apikey: sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -H \"Authorization: Bearer sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -D -)",
+      "Bash(curl -s \"https://ipwankmwmvbjgpinvbrk.supabase.co/rest/v1/vehicules?select=*&limit=1\" -H \"apikey: sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -H \"Authorization: Bearer sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -H \"Prefer: return=representation, count=exact\")",
+      "Bash(curl -s \"https://ipwankmwmvbjgpinvbrk.supabase.co/rest/v1/?limit=0\" -H \"apikey: sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -H \"Authorization: Bearer sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -H \"Accept: application/openapi+json\")",
+      "Bash(python3 -c \":*)",
+      "Bash(node -e \":*)",
+      "Bash(curl -s \"https://ipwankmwmvbjgpinvbrk.supabase.co/rest/v1/\" -H \"apikey: sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -H \"Authorization: Bearer sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -H \"Accept: application/openapi+json\")",
+      "Bash(curl -s \"https://ipwankmwmvbjgpinvbrk.supabase.co/rest/v1/\" -H \"apikey: sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -H \"Authorization: Bearer sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\")",
+      "Bash(npx supabase db execute --project-ref ipwankmwmvbjgpinvbrk \"CREATE TABLE bons_travail \\(:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://ipwankmwmvbjgpinvbrk.supabase.co/rest/v1/factures?select=labour_rows&limit=0\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlwd2Fua213bXZiamdwaW52YnJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEwMjE0NTYsImV4cCI6MjA1NjU5NzQ1Nn0.GFEBiOaO_JvB_yAmzOeDKI7G4VPJHnSLILsRYpIh-J8\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlwd2Fua213bXZiamdwaW52YnJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEwMjE0NTYsImV4cCI6MjA1NjU5NzQ1Nn0.GFEBiOaO_JvB_yAmzOeDKI7G4VPJHnSLILsRYpIh-J8\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://ipwankmwmvbjgpinvbrk.supabase.co/rest/v1/factures?select=labour_rows&limit=0\" -H \"apikey: sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -H \"Authorization: Bearer sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://ipwankmwmvbjgpinvbrk.supabase.co/rest/v1/factures?select=parts_rows,discount_pct,deposit,sous_total,tps,tvq,notes_internes,garantie,km,description&limit=0\" -H \"apikey: sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -H \"Authorization: Bearer sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://ipwankmwmvbjgpinvbrk.supabase.co/rest/v1/bons_travail?select=id&limit=0\" -H \"apikey: sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -H \"Authorization: Bearer sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://ipwankmwmvbjgpinvbrk.supabase.co/rest/v1/bons_travail?select=chrono_ms&limit=0\" -H \"apikey: sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -H \"Authorization: Bearer sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://ipwankmwmvbjgpinvbrk.supabase.co/rest/v1/rendezvous?select=heure,heure_fin,titre&limit=0\" -H \"apikey: sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -H \"Authorization: Bearer sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\")",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(where npm)",
+      "Bash(curl -s \"https://ipwankmwmvbjgpinvbrk.supabase.co/rest/v1/rendezvous?select=id,date_rdv,heure,heure_fin,titre,statut&order=date_rdv.desc&limit=10\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlwd2Fua213bXZiamdwaW52YnJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2MTc2MDYsImV4cCI6MjA2NDE5MzYwNn0.yLXJMb0MHbRu1gBUOeLfNTOnMqS5_dBbNGsWU4t9bE0\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlwd2Fua213bXZiamdwaW52YnJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2MTc2MDYsImV4cCI6MjA2NDE5MzYwNn0.yLXJMb0MHbRu1gBUOeLfNTOnMqS5_dBbNGsWU4t9bE0\")",
+      "Bash(curl -s \"https://ipwankmwmvbjgpinvbrk.supabase.co/rest/v1/rendezvous?select=id,date_rdv,heure,heure_fin,titre,statut&order=date_rdv.desc&limit=10\" -H \"apikey: sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -H \"Authorization: Bearer sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\")",
+      "Bash(curl -s \"https://ipwankmwmvbjgpinvbrk.supabase.co/rest/v1/rendezvous?select=*&order=created_at.desc&limit=5\" -H \"apikey: sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\" -H \"Authorization: Bearer sb_publishable_ixe6rWHdXzU8QpbO3-pmPQ_mrEtz-So\")",
+      "Bash(gh auth status)",
+      "Bash(gh repo list --limit 5)",
+      "Bash(git --version)",
+      "Bash(git config --global user.name)",
+      "Bash(git config --global user.email)",
+      "WebFetch(domain:github.com)",
+      "Bash(git init)",
+      "Bash(git add -A)"
+    ]
+  }
+}

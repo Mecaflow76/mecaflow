@@ -1,0 +1,504 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
+
+interface Client {
+  id: string;
+  nom: string;
+  prenom: string;
+  email: string;
+  telephone: string;
+  adresse: string;
+  ville: string;
+  code_postal: string;
+}
+
+interface Vehicule {
+  id: string;
+  client_id: string;
+  marque: string;
+  modele: string;
+  annee: number | null;
+  plaque: string;
+  vin: string;
+  kilometrage: number | null;
+  couleur: string;
+}
+
+const emptyForm = {
+  nom: "",
+  prenom: "",
+  email: "",
+  telephone: "",
+  adresse: "",
+  ville: "",
+  code_postal: "",
+};
+
+export default function ClientsPage() {
+  const router = useRouter();
+  const [clients, setClients] = useState<Client[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [form, setForm] = useState(emptyForm);
+  const [saving, setSaving] = useState(false);
+  const [vehicules, setVehicules] = useState<Vehicule[]>([]);
+  // Modal vehicule picker
+  const [pickedClient, setPickedClient] = useState<Client | null>(null);
+
+  useEffect(() => {
+    fetchClients();
+    fetchVehicules();
+  }, []);
+
+  async function fetchVehicules() {
+    const { data } = await supabase
+      .from("vehicules")
+      .select("*")
+      .order("marque", { ascending: true });
+    setVehicules(data || []);
+  }
+
+  function getClientVehicules(clientId: string) {
+    return vehicules.filter((v) => v.client_id === clientId);
+  }
+
+  async function fetchClients() {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("clients")
+      .select("*")
+      .order("nom", { ascending: true });
+
+    if (error) {
+      setError(error.message);
+    } else {
+      setClients(data || []);
+    }
+    setLoading(false);
+  }
+
+  function openNew() {
+    setEditingClient(null);
+    setForm(emptyForm);
+    setShowForm(true);
+  }
+
+  function openEdit(client: Client) {
+    setEditingClient(client);
+    setForm({
+      nom: client.nom,
+      prenom: client.prenom,
+      email: client.email,
+      telephone: client.telephone,
+      adresse: client.adresse || "",
+      ville: client.ville || "",
+      code_postal: client.code_postal || "",
+    });
+    setShowForm(true);
+  }
+
+  function closeForm() {
+    setShowForm(false);
+    setEditingClient(null);
+    setForm(emptyForm);
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true);
+
+    if (editingClient) {
+      const { error } = await supabase
+        .from("clients")
+        .update(form)
+        .eq("id", editingClient.id);
+      if (error) setError(error.message);
+    } else {
+      const { error } = await supabase.from("clients").insert(form);
+      if (error) setError(error.message);
+    }
+
+    setSaving(false);
+    closeForm();
+    fetchClients();
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Supprimer ce client ?")) return;
+
+    const { error } = await supabase.from("clients").delete().eq("id", id);
+    if (error) {
+      setError(error.message);
+    } else {
+      fetchClients();
+    }
+  }
+
+  // Ouvrir le modal de sélection véhicule (comme l'original HTML pickVehicle)
+  function openVehiclePicker(client: Client) {
+    setPickedClient(client);
+  }
+
+  function closeVehiclePicker() {
+    setPickedClient(null);
+  }
+
+  const filteredClients = clients.filter((client) => {
+    const term = search.toLowerCase();
+    return (
+      client.nom?.toLowerCase().includes(term) ||
+      client.prenom?.toLowerCase().includes(term) ||
+      client.email?.toLowerCase().includes(term) ||
+      client.telephone?.includes(term) ||
+      client.ville?.toLowerCase().includes(term)
+    );
+  });
+
+  return (
+    <div className="min-h-screen bg-background p-8">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-8 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-2xl font-bold text-foreground">Clients</h1>
+            <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
+              {filteredClients.length} client{filteredClients.length !== 1 && "s"}
+            </span>
+          </div>
+          <button
+            onClick={openNew}
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+          >
+            + Nouveau client
+          </button>
+        </div>
+
+        <input
+          type="text"
+          placeholder="Rechercher par nom, email, telephone ou ville..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="mb-6 w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
+
+        {loading && (
+          <p className="py-12 text-center text-gray-500">
+            Chargement des clients...
+          </p>
+        )}
+
+        {error && (
+          <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-600">
+            Erreur : {error}
+          </div>
+        )}
+
+        {!loading && !error && filteredClients.length === 0 && (
+          <p className="py-12 text-center text-gray-500">Aucun client trouve.</p>
+        )}
+
+        {!loading && !error && filteredClients.length > 0 && (
+          <div className="overflow-hidden rounded-lg border border-gray-200">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+                <tr>
+                  <th className="px-6 py-3">Nom</th>
+                  <th className="px-6 py-3">Telephone</th>
+                  <th className="px-6 py-3">Vehicules</th>
+                  <th className="px-6 py-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredClients.map((client) => {
+                  const nbVehicules = getClientVehicules(client.id).length;
+                  return (
+                    <tr
+                      key={client.id}
+                      className="bg-white hover:bg-gray-50 transition-colors cursor-pointer"
+                      onClick={() => openVehiclePicker(client)}
+                      title="Cliquer pour choisir un vehicule"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="font-medium text-gray-900">
+                          {client.prenom} {client.nom}
+                        </div>
+                        {client.email && (
+                          <div className="text-xs text-gray-500">{client.email}</div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-gray-700">
+                        {client.telephone || "—"}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="text-gray-700">{nbVehicules}</span>
+                      </td>
+                      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={() => openEdit(client)}
+                          className="mr-3 text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        >
+                          Modifier
+                        </button>
+                        <button
+                          onClick={() => handleDelete(client.id)}
+                          className="text-red-600 hover:text-red-800 text-sm font-medium"
+                        >
+                          Supprimer
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Modal formulaire client */}
+      {showForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+            <h2 className="mb-6 text-lg font-semibold text-gray-900">
+              {editingClient ? "Modifier le client" : "Nouveau client"}
+            </h2>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Nom
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={form.nom}
+                    onChange={(e) => setForm({ ...form, nom: e.target.value })}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Prenom
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={form.prenom}
+                    onChange={(e) =>
+                      setForm({ ...form, prenom: e.target.value })
+                    }
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm({ ...form, email: e.target.value })
+                    }
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Telephone
+                  </label>
+                  <input
+                    type="tel"
+                    value={form.telephone}
+                    onChange={(e) =>
+                      setForm({ ...form, telephone: e.target.value })
+                    }
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  Adresse
+                </label>
+                <input
+                  type="text"
+                  value={form.adresse}
+                  onChange={(e) =>
+                    setForm({ ...form, adresse: e.target.value })
+                  }
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Ville
+                  </label>
+                  <input
+                    type="text"
+                    value={form.ville}
+                    onChange={(e) =>
+                      setForm({ ...form, ville: e.target.value })
+                    }
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Code postal
+                  </label>
+                  <input
+                    type="text"
+                    value={form.code_postal}
+                    onChange={(e) =>
+                      setForm({ ...form, code_postal: e.target.value })
+                    }
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={closeForm}
+                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {saving
+                    ? "Enregistrement..."
+                    : editingClient
+                      ? "Enregistrer"
+                      : "Ajouter"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal sélection véhicule (comme pickVehicle dans l'original) */}
+      {pickedClient && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+          onClick={closeVehiclePicker}
+        >
+          <div
+            className="w-full max-w-lg rounded-xl bg-white shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Vehicules de {pickedClient.prenom} {pickedClient.nom}
+              </h2>
+              <button
+                onClick={closeVehiclePicker}
+                className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="px-6 py-5">
+              {getClientVehicules(pickedClient.id).length === 0 ? (
+                <div className="py-8 text-center">
+                  <div className="text-4xl mb-3">🚗</div>
+                  <p className="text-gray-500 text-sm">
+                    Aucun vehicule pour ce client.
+                  </p>
+                  <p className="text-gray-400 text-xs mt-1">
+                    Ajoutez un vehicule dans la section Vehicules.
+                  </p>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {getClientVehicules(pickedClient.id).map((v) => (
+                    <div
+                      key={v.id}
+                      className="rounded-lg border border-gray-200 bg-gray-50 p-4 hover:border-blue-300 transition-colors"
+                    >
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="text-2xl">🚗</span>
+                        <div>
+                          <div className="font-semibold text-gray-900">
+                            {v.annee ? v.annee + " " : ""}
+                            {v.marque} {v.modele}
+                          </div>
+                          <div className="text-xs text-gray-500 flex items-center gap-2">
+                            {v.plaque && (
+                              <span className="rounded bg-gray-200 px-1.5 py-0.5 font-mono font-medium text-gray-700">
+                                {v.plaque}
+                              </span>
+                            )}
+                            {v.kilometrage && (
+                              <span>{Number(v.kilometrage).toLocaleString("fr-CA")} km</span>
+                            )}
+                            {v.couleur && <span>— {v.couleur}</span>}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            closeVehiclePicker();
+                            router.push(
+                              `/bons-travail?client_id=${pickedClient.id}&vehicule_id=${v.id}`
+                            );
+                          }}
+                          className="flex-1 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                        >
+                          🔧 Nouveau bon de travail
+                        </button>
+                        <button
+                          onClick={() => {
+                            closeVehiclePicker();
+                            router.push(
+                              `/factures?client_id=${pickedClient.id}&vehicule_id=${v.id}`
+                            );
+                          }}
+                          className="flex-1 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                        >
+                          📄 Nouvelle facture
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="border-t border-gray-200 px-6 py-3 flex justify-end">
+              <button
+                onClick={closeVehiclePicker}
+                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
