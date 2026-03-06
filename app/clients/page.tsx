@@ -173,7 +173,7 @@ export default function ClientsPage() {
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <h1 className="text-2xl font-bold text-foreground">Clients</h1>
-            <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
+            <span className="rounded-full bg-blue-100 dark:bg-blue-900/30 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-400">
               {filteredClients.length} client{filteredClients.length !== 1 && "s"}
             </span>
           </div>
@@ -190,29 +190,29 @@ export default function ClientsPage() {
           placeholder="Rechercher par nom, email, telephone ou ville..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="mb-6 w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="mb-6 w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         />
 
         {loading && (
-          <p className="py-12 text-center text-gray-500">
+          <p className="py-12 text-center text-gray-500 dark:text-gray-400">
             Chargement des clients...
           </p>
         )}
 
         {error && (
-          <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-600">
+          <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-900/30 p-4 text-sm text-red-600 dark:text-red-400">
             Erreur : {error}
           </div>
         )}
 
         {!loading && !error && filteredClients.length === 0 && (
-          <p className="py-12 text-center text-gray-500">Aucun client trouve.</p>
+          <p className="py-12 text-center text-gray-500 dark:text-gray-400">Aucun client trouve.</p>
         )}
 
         {!loading && !error && filteredClients.length > 0 && (
-          <div className="overflow-hidden rounded-lg border border-gray-200">
+          <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+              <thead className="bg-gray-50 dark:bg-gray-900 text-xs uppercase text-gray-500 dark:text-gray-400">
                 <tr>
                   <th className="px-6 py-3">Nom</th>
                   <th className="px-6 py-3">Telephone</th>
@@ -220,25 +220,25 @@ export default function ClientsPage() {
                   <th className="px-6 py-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredClients.map((client) => {
                   const nbVehicules = getClientVehicules(client.id).length;
                   return (
                     <tr
                       key={client.id}
-                      className="bg-white hover:bg-gray-50 transition-colors cursor-pointer"
+                      className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
                       onClick={() => openVehiclePicker(client)}
                       title="Cliquer pour choisir un vehicule"
                     >
                       <td className="px-6 py-4">
-                        <div className="font-medium text-gray-900">
+                        <div className="font-medium text-gray-900 dark:text-gray-100">
                           {client.prenom} {client.nom}
                         </div>
                         {client.email && (
-                          <div className="text-xs text-gray-500">{client.email}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">{client.email}</div>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-gray-700">
+                      <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                         {client.telephone || "—"}
                       </td>
                       <td className="px-6 py-4">
@@ -270,15 +270,15 @@ export default function ClientsPage() {
       {/* Modal formulaire client */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-            <h2 className="mb-6 text-lg font-semibold text-gray-900">
+          <div className="w-full max-w-md rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-gray-100">
               {editingClient ? "Modifier le client" : "Nouveau client"}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Nom
                   </label>
                   <input
@@ -286,11 +286,11 @@ export default function ClientsPage() {
                     required
                     value={form.nom}
                     onChange={(e) => setForm({ ...form, nom: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Prenom
                   </label>
                   <input
@@ -300,14 +300,14 @@ export default function ClientsPage() {
                     onChange={(e) =>
                       setForm({ ...form, prenom: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Email
                   </label>
                   <input
@@ -316,11 +316,11 @@ export default function ClientsPage() {
                     onChange={(e) =>
                       setForm({ ...form, email: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Telephone
                   </label>
                   <input
@@ -330,13 +330,13 @@ export default function ClientsPage() {
                     onChange={(e) =>
                       setForm({ ...form, telephone: formatTelephone(e.target.value) })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Adresse
                 </label>
                 <input
@@ -345,13 +345,13 @@ export default function ClientsPage() {
                   onChange={(e) =>
                     setForm({ ...form, adresse: e.target.value })
                   }
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Ville
                   </label>
                   <input
@@ -360,11 +360,11 @@ export default function ClientsPage() {
                     onChange={(e) =>
                       setForm({ ...form, ville: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Code postal
                   </label>
                   <input
@@ -373,7 +373,7 @@ export default function ClientsPage() {
                     onChange={(e) =>
                       setForm({ ...form, code_postal: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -382,7 +382,7 @@ export default function ClientsPage() {
                 <button
                   type="button"
                   onClick={closeForm}
-                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   Annuler
                 </button>
@@ -410,17 +410,17 @@ export default function ClientsPage() {
           onClick={closeVehiclePicker}
         >
           <div
-            className="w-full max-w-lg rounded-xl bg-white shadow-xl"
+            className="w-full max-w-lg rounded-xl bg-white dark:bg-gray-800 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-              <h2 className="text-lg font-semibold text-gray-900">
+            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Vehicules de {pickedClient.prenom} {pickedClient.nom}
               </h2>
               <button
                 onClick={closeVehiclePicker}
-                className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xl leading-none"
               >
                 ✕
               </button>
@@ -431,10 +431,10 @@ export default function ClientsPage() {
               {getClientVehicules(pickedClient.id).length === 0 ? (
                 <div className="py-8 text-center">
                   <div className="text-4xl mb-3">🚗</div>
-                  <p className="text-gray-500 text-sm">
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
                     Aucun vehicule pour ce client.
                   </p>
-                  <p className="text-gray-400 text-xs mt-1">
+                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">
                     Ajoutez un vehicule dans la section Vehicules.
                   </p>
                 </div>
@@ -443,18 +443,18 @@ export default function ClientsPage() {
                   {getClientVehicules(pickedClient.id).map((v) => (
                     <div
                       key={v.id}
-                      className="rounded-lg border border-gray-200 bg-gray-50 p-4 hover:border-blue-300 transition-colors"
+                      className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 p-4 hover:border-blue-300 transition-colors"
                     >
                       <div className="flex items-center gap-3 mb-3">
                         <span className="text-2xl">🚗</span>
                         <div>
-                          <div className="font-semibold text-gray-900">
+                          <div className="font-semibold text-gray-900 dark:text-gray-100">
                             {v.annee ? v.annee + " " : ""}
                             {v.marque} {v.modele}
                           </div>
-                          <div className="text-xs text-gray-500 flex items-center gap-2">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
                             {v.plaque && (
-                              <span className="rounded bg-gray-200 px-1.5 py-0.5 font-mono font-medium text-gray-700">
+                              <span className="rounded bg-gray-200 dark:bg-gray-600 px-1.5 py-0.5 font-mono font-medium text-gray-700 dark:text-gray-300">
                                 {v.plaque}
                               </span>
                             )}
@@ -496,10 +496,10 @@ export default function ClientsPage() {
             </div>
 
             {/* Footer */}
-            <div className="border-t border-gray-200 px-6 py-3 flex justify-end">
+            <div className="border-t border-gray-200 dark:border-gray-700 px-6 py-3 flex justify-end">
               <button
                 onClick={closeVehiclePicker}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 Fermer
               </button>

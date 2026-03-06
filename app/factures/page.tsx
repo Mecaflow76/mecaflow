@@ -56,11 +56,11 @@ interface Facture {
 
 /* ───── Constants ───── */
 const STATUTS = [
-  { value: "brouillon", label: "Brouillon", color: "bg-gray-100 text-gray-800" },
-  { value: "envoyee", label: "Envoyee", color: "bg-blue-100 text-blue-800" },
-  { value: "payee", label: "Payee", color: "bg-green-100 text-green-800" },
-  { value: "en_retard", label: "En retard", color: "bg-red-100 text-red-800" },
-  { value: "annulee", label: "Annulee", color: "bg-red-100 text-red-800" },
+  { value: "brouillon", label: "Brouillon", color: "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300" },
+  { value: "envoyee", label: "Envoyee", color: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400" },
+  { value: "payee", label: "Payee", color: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400" },
+  { value: "en_retard", label: "En retard", color: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400" },
+  { value: "annulee", label: "Annulee", color: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400" },
 ];
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -86,7 +86,7 @@ const emptyForm = {
 /* ───── Component ───── */
 export default function FacturesPageWrapper() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-gray-500">Chargement...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-gray-500 dark:text-gray-400">Chargement...</div>}>
       <FacturesPage />
     </Suspense>
   );
@@ -375,11 +375,11 @@ function FacturesPage() {
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <h1 className="text-2xl font-bold text-foreground">Factures</h1>
-            <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
+            <span className="rounded-full bg-blue-100 dark:bg-blue-900/30 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-400">
               {filteredFactures.length} facture
               {filteredFactures.length !== 1 && "s"}
             </span>
-            <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
+            <span className="rounded-full bg-green-100 dark:bg-green-900/30 px-3 py-1 text-sm font-medium text-green-800 dark:text-green-400">
               Total : {fmt(grandTotal)}
             </span>
           </div>
@@ -397,29 +397,29 @@ function FacturesPage() {
           placeholder="Rechercher par client, date, statut ou montant..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="mb-6 w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="mb-6 w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         />
 
         {/* ── States ── */}
         {loading && (
-          <p className="py-12 text-center text-gray-500">Chargement...</p>
+          <p className="py-12 text-center text-gray-500 dark:text-gray-400">Chargement...</p>
         )}
         {error && (
-          <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-600">
+          <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-900/30 p-4 text-sm text-red-600 dark:text-red-400">
             Erreur : {error}
           </div>
         )}
         {!loading && !error && filteredFactures.length === 0 && (
-          <p className="py-12 text-center text-gray-500">
+          <p className="py-12 text-center text-gray-500 dark:text-gray-400">
             Aucune facture trouvee.
           </p>
         )}
 
         {/* ── Table ── */}
         {!loading && !error && filteredFactures.length > 0 && (
-          <div className="overflow-hidden rounded-lg border border-gray-200">
+          <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+              <thead className="bg-gray-50 dark:bg-gray-900 text-xs uppercase text-gray-500 dark:text-gray-400">
                 <tr>
                   <th className="px-6 py-3">Date</th>
                   <th className="px-6 py-3">Client</th>
@@ -429,27 +429,27 @@ function FacturesPage() {
                   <th className="px-6 py-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredFactures.map((f) => (
                   <tr
                     key={f.id}
-                    className="bg-white hover:bg-gray-50 transition-colors cursor-pointer"
+                    className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
                     onClick={() => openEdit(f)}
                   >
-                    <td className="px-6 py-4 font-medium text-gray-900">
+                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-100">
                       {f.date_facture}
                     </td>
-                    <td className="px-6 py-4 text-gray-700">
+                    <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                       {f.clients
                         ? `${f.clients.nom} ${f.clients.prenom}`
                         : "\u2014"}
                     </td>
-                    <td className="px-6 py-4 text-gray-700">
+                    <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                       {f.vehicules
                         ? `${f.vehicules.marque} ${f.vehicules.modele}`
                         : "\u2014"}
                     </td>
-                    <td className="px-6 py-4 font-medium text-gray-900">
+                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-100">
                       {fmt(f.montant_total)}
                     </td>
                     <td className="px-6 py-4">{getStatutBadge(f.statut)}</td>
@@ -484,8 +484,8 @@ function FacturesPage() {
       {/* ═══════════════════ MODAL FACTURE ═══════════════════ */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
-          <div className="my-8 w-full max-w-4xl rounded-xl bg-white p-6 shadow-xl">
-            <h2 className="mb-6 text-lg font-semibold text-gray-900">
+          <div className="my-8 w-full max-w-4xl rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-gray-100">
               {editingFacture ? "Modifier la facture" : "Nouvelle facture"}
             </h2>
 
@@ -493,7 +493,7 @@ function FacturesPage() {
               {/* ── En-tete ── */}
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Client *
                   </label>
                   <select
@@ -506,7 +506,7 @@ function FacturesPage() {
                         vehicule_id: "",
                       })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="">-- Selectionner --</option>
                     {clients.map((c) => (
@@ -517,7 +517,7 @@ function FacturesPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Vehicule
                   </label>
                   <select
@@ -525,7 +525,7 @@ function FacturesPage() {
                     onChange={(e) =>
                       setForm({ ...form, vehicule_id: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="">-- Selectionner --</option>
                     {filteredVehicules.map((v) => (
@@ -537,7 +537,7 @@ function FacturesPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Date *
                   </label>
                   <input
@@ -547,14 +547,14 @@ function FacturesPage() {
                     onChange={(e) =>
                       setForm({ ...form, date_facture: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Kilometrage
                   </label>
                   <input
@@ -562,11 +562,11 @@ function FacturesPage() {
                     placeholder="75000"
                     value={form.km}
                     onChange={(e) => setForm({ ...form, km: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Statut
                   </label>
                   <select
@@ -574,7 +574,7 @@ function FacturesPage() {
                     onChange={(e) =>
                       setForm({ ...form, statut: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     {STATUTS.map((s) => (
                       <option key={s.value} value={s.value}>
@@ -584,7 +584,7 @@ function FacturesPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Garantie
                   </label>
                   <input
@@ -594,13 +594,13 @@ function FacturesPage() {
                     onChange={(e) =>
                       setForm({ ...form, garantie: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Description des travaux
                 </label>
                 <textarea
@@ -609,28 +609,28 @@ function FacturesPage() {
                   onChange={(e) =>
                     setForm({ ...form, description: e.target.value })
                   }
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
               {/* ════════════ MAIN D'OEUVRE ════════════ */}
               <div>
                 <div className="mb-2 flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-gray-800">
+                  <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
                     Main d&apos;oeuvre
                   </h3>
                   <button
                     type="button"
                     onClick={addLabour}
-                    className="rounded bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100"
+                    className="rounded bg-blue-50 dark:bg-blue-900/30 px-3 py-1 text-xs font-medium text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50"
                   >
                     + Ajouter ligne
                   </button>
                 </div>
                 {labourRows.length > 0 && (
-                  <div className="overflow-hidden rounded-lg border border-gray-200">
+                  <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
                     <table className="w-full text-sm">
-                      <thead className="bg-gray-50 text-xs text-gray-500">
+                      <thead className="bg-gray-50 dark:bg-gray-900 text-xs text-gray-500 dark:text-gray-400">
                         <tr>
                           <th className="px-3 py-2 text-left" style={{ width: "44%" }}>
                             Description
@@ -647,9 +647,9 @@ function FacturesPage() {
                           <th className="px-3 py-2 text-center" style={{ width: "8%" }}></th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-200">
+                      <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                         {labourRows.map((r) => (
-                          <tr key={r.id} className="bg-white">
+                          <tr key={r.id} className="bg-white dark:bg-gray-800">
                             <td className="px-2 py-1.5">
                               <input
                                 type="text"
@@ -658,7 +658,7 @@ function FacturesPage() {
                                   updateLabour(r.id, "desc", e.target.value)
                                 }
                                 placeholder="Description..."
-                                className="w-full rounded border border-gray-200 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+                                className="w-full rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
                               />
                             </td>
                             <td className="px-2 py-1.5">
@@ -685,7 +685,7 @@ function FacturesPage() {
                                 className="w-full rounded border border-gray-200 px-2 py-1.5 text-center text-sm focus:border-blue-500 focus:outline-none"
                               />
                             </td>
-                            <td className="px-3 py-1.5 text-right text-sm font-medium text-gray-900">
+                            <td className="px-3 py-1.5 text-right text-sm font-medium text-gray-900 dark:text-gray-100">
                               {fmt(r.qty * r.rate)}
                             </td>
                             <td className="px-2 py-1.5 text-center">
@@ -705,7 +705,7 @@ function FacturesPage() {
                   </div>
                 )}
                 {labourRows.length === 0 && (
-                  <p className="py-3 text-center text-xs text-gray-400">
+                  <p className="py-3 text-center text-xs text-gray-400 dark:text-gray-500">
                     Aucune ligne de main d&apos;oeuvre
                   </p>
                 )}
@@ -714,21 +714,21 @@ function FacturesPage() {
               {/* ════════════ PIECES ════════════ */}
               <div>
                 <div className="mb-2 flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-gray-800">
+                  <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
                     Pieces
                   </h3>
                   <button
                     type="button"
                     onClick={addPart}
-                    className="rounded bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100"
+                    className="rounded bg-blue-50 dark:bg-blue-900/30 px-3 py-1 text-xs font-medium text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50"
                   >
                     + Ajouter piece
                   </button>
                 </div>
                 {partsRows.length > 0 && (
-                  <div className="overflow-hidden rounded-lg border border-gray-200">
+                  <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
                     <table className="w-full text-sm">
-                      <thead className="bg-gray-50 text-xs text-gray-500">
+                      <thead className="bg-gray-50 dark:bg-gray-900 text-xs text-gray-500 dark:text-gray-400">
                         <tr>
                           <th className="px-3 py-2 text-left" style={{ width: "26%" }}>
                             Description
@@ -756,7 +756,7 @@ function FacturesPage() {
                           <th className="px-3 py-2 text-center" style={{ width: "6%" }}></th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-200">
+                      <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                         {partsRows.map((r) => {
                           const rPrice = parseFloat(String(r.price)) || 0;
                           const rCost = parseFloat(String(r.cost)) || 0;
@@ -775,7 +775,7 @@ function FacturesPage() {
                                   : "text-red-600"
                               : "text-gray-400";
                           return (
-                            <tr key={r.id} className="bg-white">
+                            <tr key={r.id} className="bg-white dark:bg-gray-800">
                               <td className="px-2 py-1.5">
                                 <input
                                   type="text"
@@ -784,7 +784,7 @@ function FacturesPage() {
                                     updatePart(r.id, "desc", e.target.value)
                                   }
                                   placeholder="Description..."
-                                  className="w-full rounded border border-gray-200 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+                                  className="w-full rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
                                 />
                               </td>
                               <td className="px-2 py-1.5">
@@ -818,7 +818,7 @@ function FacturesPage() {
                                   onChange={(e) =>
                                     updatePart(r.id, "cost", e.target.value)
                                   }
-                                  className="w-full rounded border border-amber-300 bg-amber-50 px-2 py-1.5 text-center text-sm focus:border-amber-500 focus:outline-none"
+                                  className="w-full rounded border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/30 px-2 py-1.5 text-center text-sm text-gray-900 dark:text-gray-100 focus:border-amber-500 focus:outline-none"
                                   title="Cout interne (non visible au client)"
                                 />
                               </td>
@@ -839,7 +839,7 @@ function FacturesPage() {
                               >
                                 {marge !== null ? `${marge}%` : "\u2014"}
                               </td>
-                              <td className="px-3 py-1.5 text-right text-sm font-medium text-gray-900">
+                              <td className="px-3 py-1.5 text-right text-sm font-medium text-gray-900 dark:text-gray-100">
                                 {fmt(r.qty * rPrice)}
                               </td>
                               <td className="px-2 py-1.5 text-center">
@@ -860,7 +860,7 @@ function FacturesPage() {
                   </div>
                 )}
                 {partsRows.length === 0 && (
-                  <p className="py-3 text-center text-xs text-gray-400">
+                  <p className="py-3 text-center text-xs text-gray-400 dark:text-gray-500">
                     Aucune piece
                   </p>
                 )}
@@ -872,7 +872,7 @@ function FacturesPage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="mb-1 block text-sm font-medium text-gray-700">
+                      <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Rabais sur pieces (%)
                       </label>
                       <input
@@ -885,11 +885,11 @@ function FacturesPage() {
                           setForm({ ...form, discount_pct: e.target.value })
                         }
                         placeholder="0"
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                       />
                     </div>
                     <div>
-                      <label className="mb-1 block text-sm font-medium text-gray-700">
+                      <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Acompte recu ($)
                       </label>
                       <input
@@ -901,13 +901,13 @@ function FacturesPage() {
                           setForm({ ...form, deposit: e.target.value })
                         }
                         placeholder="0.00"
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
+                    <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Notes (visible sur facture)
                     </label>
                     <textarea
@@ -916,12 +916,12 @@ function FacturesPage() {
                       onChange={(e) =>
                         setForm({ ...form, notes: e.target.value })
                       }
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-amber-700">
+                    <label className="mb-1 block text-sm font-medium text-amber-700 dark:text-amber-400">
                       Notes internes (jamais imprime)
                     </label>
                     <textarea
@@ -930,20 +930,20 @@ function FacturesPage() {
                       onChange={(e) =>
                         setForm({ ...form, notes_internes: e.target.value })
                       }
-                      className="w-full rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-gray-900 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                      className="w-full rounded-lg border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/30 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                     />
                   </div>
                 </div>
 
                 {/* ── Right: totals box ── */}
-                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4">
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Main d&apos;oeuvre</span>
+                      <span className="text-gray-600 dark:text-gray-400">Main d&apos;oeuvre</span>
                       <span className="font-medium">{fmt(totals.labourTotal)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Pieces</span>
+                      <span className="text-gray-600 dark:text-gray-400">Pieces</span>
                       <span className="font-medium">{fmt(totals.partsTotal)}</span>
                     </div>
                     {margeGlobale !== null && (
@@ -956,13 +956,13 @@ function FacturesPage() {
                         </span>
                       </div>
                     )}
-                    <div className="border-t border-gray-300 pt-2 flex justify-between font-medium">
+                    <div className="border-t border-gray-300 dark:border-gray-600 pt-2 flex justify-between font-medium">
                       <span>Sous-total</span>
                       <span>{fmt(totals.sub)}</span>
                     </div>
 
                     {totals.disc > 0 && (
-                      <div className="flex justify-between text-red-600">
+                      <div className="flex justify-between text-red-600 dark:text-red-400">
                         <span>
                           Rabais ({totals.discPct}% pieces)
                         </span>
@@ -971,15 +971,15 @@ function FacturesPage() {
                     )}
 
                     <div className="flex justify-between">
-                      <span className="text-gray-600">TPS (5%)</span>
+                      <span className="text-gray-600 dark:text-gray-400">TPS (5%)</span>
                       <span>{fmt(totals.tps)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">TVQ (9,975%)</span>
+                      <span className="text-gray-600 dark:text-gray-400">TVQ (9,975%)</span>
                       <span>{fmt(totals.tvq)}</span>
                     </div>
 
-                    <div className="border-t border-gray-300 pt-2 flex justify-between text-base font-bold">
+                    <div className="border-t border-gray-300 dark:border-gray-600 pt-2 flex justify-between text-base font-bold">
                       <span>TOTAL</span>
                       <span>{fmt(totals.total)}</span>
                     </div>
@@ -990,7 +990,7 @@ function FacturesPage() {
                           <span>Acompte</span>
                           <span>-{fmt(totals.dep)}</span>
                         </div>
-                        <div className="flex justify-between text-base font-bold text-blue-700">
+                        <div className="flex justify-between text-base font-bold text-blue-700 dark:text-blue-400">
                           <span>SOLDE DU</span>
                           <span>{fmt(totals.due)}</span>
                         </div>
@@ -1001,11 +1001,11 @@ function FacturesPage() {
               </div>
 
               {/* ── Buttons ── */}
-              <div className="flex justify-end gap-3 border-t border-gray-200 pt-4">
+              <div className="flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700 pt-4">
                 <button
                   type="button"
                   onClick={closeForm}
-                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   Annuler
                 </button>

@@ -45,11 +45,11 @@ interface BonTravail {
 
 /* ───── Constants ───── */
 const STATUTS = [
-  { value: "ouvert", label: "Ouvert", color: "bg-yellow-100 text-yellow-800" },
-  { value: "en_cours", label: "En cours", color: "bg-blue-100 text-blue-800" },
-  { value: "attente_pieces", label: "Attente pieces", color: "bg-orange-100 text-orange-800" },
-  { value: "complete", label: "Complete", color: "bg-green-100 text-green-800" },
-  { value: "annule", label: "Annule", color: "bg-red-100 text-red-800" },
+  { value: "ouvert", label: "Ouvert", color: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400" },
+  { value: "en_cours", label: "En cours", color: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400" },
+  { value: "attente_pieces", label: "Attente pieces", color: "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400" },
+  { value: "complete", label: "Complete", color: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400" },
+  { value: "annule", label: "Annule", color: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400" },
 ];
 
 const emptyForm = {
@@ -86,7 +86,7 @@ type ChronoState = "idle" | "running" | "paused" | "stopped";
 /* ───── Component ───── */
 export default function BonsTravailPageWrapper() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-gray-500">Chargement...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-gray-500 dark:text-gray-400">Chargement...</div>}>
       <BonsTravailPage />
     </Suspense>
   );
@@ -416,7 +416,7 @@ function BonsTravailPage() {
         {s.label}
       </span>
     ) : (
-      <span className="text-gray-500">{statut}</span>
+      <span className="text-gray-500 dark:text-gray-400">{statut}</span>
     );
   }
 
@@ -448,7 +448,7 @@ function BonsTravailPage() {
             <h1 className="text-2xl font-bold text-foreground">
               Bons de travail
             </h1>
-            <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
+            <span className="rounded-full bg-blue-100 dark:bg-blue-900/30 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-400">
               {filteredBons.length} bon{filteredBons.length !== 1 && "s"}
             </span>
           </div>
@@ -466,12 +466,12 @@ function BonsTravailPage() {
             placeholder="Rechercher par client, vehicule, symptomes, travaux..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
           <select
             value={filterStatut}
             onChange={(e) => setFilterStatut(e.target.value)}
-            className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2.5 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
             <option value="">Tous les statuts</option>
             {STATUTS.map((s) => (
@@ -483,25 +483,25 @@ function BonsTravailPage() {
         </div>
 
         {loading && (
-          <p className="py-12 text-center text-gray-500">Chargement...</p>
+          <p className="py-12 text-center text-gray-500 dark:text-gray-400">Chargement...</p>
         )}
 
         {error && (
-          <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-600">
+          <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-900/30 p-4 text-sm text-red-600 dark:text-red-400">
             Erreur : {error}
           </div>
         )}
 
         {!loading && !error && filteredBons.length === 0 && (
-          <p className="py-12 text-center text-gray-500">
+          <p className="py-12 text-center text-gray-500 dark:text-gray-400">
             Aucun bon de travail trouve.
           </p>
         )}
 
         {!loading && !error && filteredBons.length > 0 && (
-          <div className="overflow-hidden rounded-lg border border-gray-200">
+          <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+              <thead className="bg-gray-50 dark:bg-gray-900 text-xs uppercase text-gray-500 dark:text-gray-400">
                 <tr>
                   <th className="px-6 py-3">Date</th>
                   <th className="px-6 py-3">Client</th>
@@ -512,30 +512,30 @@ function BonsTravailPage() {
                   <th className="px-6 py-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredBons.map((bon) => (
                   <tr
                     key={bon.id}
-                    className="bg-white hover:bg-gray-50 transition-colors cursor-pointer"
+                    className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
                     onClick={() => openEdit(bon)}
                   >
-                    <td className="px-6 py-4 font-medium text-gray-900">
+                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-100">
                       {bon.date_creation}
                     </td>
-                    <td className="px-6 py-4 text-gray-700">
+                    <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                       {bon.clients
                         ? `${bon.clients.nom} ${bon.clients.prenom}`
                         : "\u2014"}
                     </td>
-                    <td className="px-6 py-4 text-gray-700">
+                    <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                       {bon.vehicules
                         ? `${bon.vehicules.marque} ${bon.vehicules.modele}`
                         : "\u2014"}
                     </td>
-                    <td className="px-6 py-4 text-gray-700">
+                    <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                       {bon.mecanicien || "\u2014"}
                     </td>
-                    <td className="px-6 py-4 text-gray-500 text-xs max-w-[200px] truncate">
+                    <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs max-w-[200px] truncate">
                       {bon.symptomes || "\u2014"}
                     </td>
                     <td className="px-6 py-4">
@@ -547,7 +547,7 @@ function BonsTravailPage() {
                           e.stopPropagation();
                           openEdit(bon);
                         }}
-                        className="mr-3 text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        className="mr-3 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
                       >
                         Modifier
                       </button>
@@ -556,7 +556,7 @@ function BonsTravailPage() {
                           e.stopPropagation();
                           handleDelete(bon.id);
                         }}
-                        className="text-red-600 hover:text-red-800 text-sm font-medium"
+                        className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm font-medium"
                       >
                         Supprimer
                       </button>
@@ -572,8 +572,8 @@ function BonsTravailPage() {
       {/* ═══════════════════ MODAL ═══════════════════ */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-2xl rounded-xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-            <h2 className="mb-6 text-lg font-semibold text-gray-900">
+          <div className="w-full max-w-2xl rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+            <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-gray-100">
               {editingBon
                 ? "Modifier le bon de travail"
                 : "Nouveau bon de travail"}
@@ -583,7 +583,7 @@ function BonsTravailPage() {
               {/* Client & Vehicule */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Client
                   </label>
                   <select
@@ -592,7 +592,7 @@ function BonsTravailPage() {
                     onChange={(e) =>
                       setForm({ ...form, client_id: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="">-- Selectionner --</option>
                     {clients.map((c) => (
@@ -603,7 +603,7 @@ function BonsTravailPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Vehicule
                   </label>
                   <select
@@ -611,7 +611,7 @@ function BonsTravailPage() {
                     onChange={(e) =>
                       setForm({ ...form, vehicule_id: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="">-- Selectionner --</option>
                     {vehicules.map((v) => (
@@ -627,7 +627,7 @@ function BonsTravailPage() {
               {/* Date, heures, km */}
               <div className="grid grid-cols-4 gap-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Date
                   </label>
                   <input
@@ -637,11 +637,11 @@ function BonsTravailPage() {
                     onChange={(e) =>
                       setForm({ ...form, date_creation: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Heure debut
                   </label>
                   <input
@@ -650,11 +650,11 @@ function BonsTravailPage() {
                     onChange={(e) =>
                       setForm({ ...form, heure_debut: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Heure fin
                   </label>
                   <input
@@ -663,11 +663,11 @@ function BonsTravailPage() {
                     onChange={(e) =>
                       setForm({ ...form, heure_fin: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Kilometrage
                   </label>
                   <input
@@ -676,7 +676,7 @@ function BonsTravailPage() {
                     onChange={(e) =>
                       setForm({ ...form, km: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -684,7 +684,7 @@ function BonsTravailPage() {
               {/* Mecanicien & Statut */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Mecanicien
                   </label>
                   <input
@@ -693,11 +693,11 @@ function BonsTravailPage() {
                     onChange={(e) =>
                       setForm({ ...form, mecanicien: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Statut
                   </label>
                   <select
@@ -705,7 +705,7 @@ function BonsTravailPage() {
                     onChange={(e) =>
                       setForm({ ...form, statut: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     {STATUTS.map((s) => (
                       <option key={s.value} value={s.value}>
@@ -717,8 +717,8 @@ function BonsTravailPage() {
               </div>
 
               {/* ════════════ CHRONOMETRE ════════════ */}
-              <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-                <label className="mb-2 block text-sm font-semibold text-blue-800">
+              <div className="rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 p-4">
+                <label className="mb-2 block text-sm font-semibold text-blue-800 dark:text-blue-400">
                   Chronometre
                 </label>
                 <div className="flex items-center gap-3 flex-wrap">
@@ -743,14 +743,14 @@ function BonsTravailPage() {
                       <button
                         type="button"
                         onClick={chronoPause}
-                        className="rounded-lg bg-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-300"
+                        className="rounded-lg bg-gray-200 dark:bg-gray-700 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
                       >
                         Pause
                       </button>
                       <button
                         type="button"
                         onClick={chronoStop}
-                        className="rounded-lg bg-red-100 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-200"
+                        className="rounded-lg bg-red-100 dark:bg-red-900/30 px-3 py-1.5 text-xs font-medium text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50"
                       >
                         Figer
                       </button>
@@ -770,14 +770,14 @@ function BonsTravailPage() {
                       <button
                         type="button"
                         onClick={chronoStop}
-                        className="rounded-lg bg-red-100 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-200"
+                        className="rounded-lg bg-red-100 dark:bg-red-900/30 px-3 py-1.5 text-xs font-medium text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50"
                       >
                         Figer
                       </button>
                       <button
                         type="button"
                         onClick={chronoReset}
-                        className="rounded-lg bg-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-300"
+                        className="rounded-lg bg-gray-200 dark:bg-gray-700 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
                       >
                         Reset
                       </button>
@@ -789,7 +789,7 @@ function BonsTravailPage() {
                     <button
                       type="button"
                       onClick={chronoReset}
-                      className="rounded-lg bg-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-300"
+                      className="rounded-lg bg-gray-200 dark:bg-gray-700 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
                     >
                       Reset
                     </button>
@@ -798,25 +798,25 @@ function BonsTravailPage() {
 
                 {/* Status message */}
                 {chronoState === "stopped" && (
-                  <p className="mt-2 text-xs text-blue-600">
+                  <p className="mt-2 text-xs text-blue-600 dark:text-blue-400">
                     Temps fige — sauvegarde avec le bon
                   </p>
                 )}
                 {chronoState === "paused" &&
                   editingBon &&
                   chronoDisplayMs > 0 && (
-                    <p className="mt-2 text-xs text-blue-600">
+                    <p className="mt-2 text-xs text-blue-600 dark:text-blue-400">
                       {chronoDisplay(chronoDisplayMs)} — Cliquez Reprendre pour
                       continuer
                     </p>
                   )}
               </div>
 
-              <hr className="border-gray-200" />
+              <hr className="border-gray-200 dark:border-gray-700" />
 
               {/* Symptomes */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Symptomes / Plainte du client
                 </label>
                 <textarea
@@ -825,13 +825,13 @@ function BonsTravailPage() {
                     setForm({ ...form, symptomes: e.target.value })
                   }
                   rows={2}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
               {/* Diagnostic */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Diagnostic
                 </label>
                 <textarea
@@ -840,13 +840,13 @@ function BonsTravailPage() {
                     setForm({ ...form, diagnostic: e.target.value })
                   }
                   rows={2}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
               {/* Travaux */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Travaux effectues
                 </label>
                 <textarea
@@ -855,13 +855,13 @@ function BonsTravailPage() {
                     setForm({ ...form, travaux: e.target.value })
                   }
                   rows={3}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
               {/* Notes */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Notes
                 </label>
                 <textarea
@@ -870,7 +870,7 @@ function BonsTravailPage() {
                     setForm({ ...form, notes: e.target.value })
                   }
                   rows={2}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
@@ -878,7 +878,7 @@ function BonsTravailPage() {
                 <button
                   type="button"
                   onClick={closeForm}
-                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   Annuler
                 </button>

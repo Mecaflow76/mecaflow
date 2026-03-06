@@ -134,10 +134,10 @@ export default function VehiculesPage() {
   }
 
   const statutLabels: Record<string, { label: string; color: string }> = {
-    en_cours: { label: "En cours", color: "bg-blue-100 text-blue-700" },
-    termine: { label: "Termine", color: "bg-green-100 text-green-700" },
-    en_attente: { label: "En attente", color: "bg-yellow-100 text-yellow-700" },
-    annule: { label: "Annule", color: "bg-red-100 text-red-700" },
+    en_cours: { label: "En cours", color: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" },
+    termine: { label: "Termine", color: "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400" },
+    en_attente: { label: "En attente", color: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400" },
+    annule: { label: "Annule", color: "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400" },
   };
 
   async function fetchVehicules() {
@@ -263,7 +263,7 @@ export default function VehiculesPage() {
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <h1 className="text-2xl font-bold text-foreground">Vehicules</h1>
-            <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
+            <span className="rounded-full bg-blue-100 dark:bg-blue-900/30 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-400">
               {filteredVehicules.length} vehicule
               {filteredVehicules.length !== 1 && "s"}
             </span>
@@ -281,31 +281,31 @@ export default function VehiculesPage() {
           placeholder="Rechercher par marque, modele, plaque ou client..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="mb-6 w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="mb-6 w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         />
 
         {loading && (
-          <p className="py-12 text-center text-gray-500">
+          <p className="py-12 text-center text-gray-500 dark:text-gray-400">
             Chargement des vehicules...
           </p>
         )}
 
         {error && (
-          <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-600">
+          <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-900/30 p-4 text-sm text-red-600 dark:text-red-400">
             Erreur : {error}
           </div>
         )}
 
         {!loading && !error && filteredVehicules.length === 0 && (
-          <p className="py-12 text-center text-gray-500">
+          <p className="py-12 text-center text-gray-500 dark:text-gray-400">
             Aucun vehicule trouve.
           </p>
         )}
 
         {!loading && !error && filteredVehicules.length > 0 && (
-          <div className="overflow-hidden rounded-lg border border-gray-200">
+          <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+              <thead className="bg-gray-50 dark:bg-gray-900 text-xs uppercase text-gray-500 dark:text-gray-400">
                 <tr>
                   <th className="px-6 py-3">Marque / Modele</th>
                   <th className="px-6 py-3">No plaque</th>
@@ -315,18 +315,18 @@ export default function VehiculesPage() {
                   <th className="px-6 py-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredVehicules.map((v) => {
                   const isExpanded = expandedVehiculeId === v.id;
                   const vehiculeBons = getVehiculeBons(v.id);
                   return (
                     <React.Fragment key={v.id}>
                       <tr
-                        className="bg-white hover:bg-gray-50 transition-colors cursor-pointer"
+                        className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
                         onClick={() => toggleExpand(v.id)}
                       >
-                        <td className="px-6 py-4 font-medium text-gray-900">
-                          <span className="mr-2 text-gray-400 text-xs">{isExpanded ? "▼" : "▶"}</span>
+                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-100">
+                          <span className="mr-2 text-gray-400 dark:text-gray-500 text-xs">{isExpanded ? "▼" : "▶"}</span>
                           {v.marque} {v.modele}
                           {v.couleur && (
                             <span className="ml-2 text-xs text-gray-400">
@@ -334,16 +334,16 @@ export default function VehiculesPage() {
                             </span>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-gray-700">
+                        <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                           {v.plaque || "—"}
                         </td>
-                        <td className="px-6 py-4 text-gray-700">{v.annee}</td>
-                        <td className="px-6 py-4 text-gray-700">
+                        <td className="px-6 py-4 text-gray-700 dark:text-gray-300">{v.annee}</td>
+                        <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                           {v.kilometrage
                             ? `${v.kilometrage.toLocaleString("fr-FR")} km`
                             : "—"}
                         </td>
-                        <td className="px-6 py-4 text-gray-700">
+                        <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                           {v.clients
                             ? `${v.clients.nom} ${v.clients.prenom}`
                             : "—"}
@@ -365,46 +365,46 @@ export default function VehiculesPage() {
                       </tr>
                       {isExpanded && (
                         <tr>
-                          <td colSpan={6} className="bg-gray-50 px-6 py-4">
+                          <td colSpan={6} className="bg-gray-50 dark:bg-gray-900 px-6 py-4">
                             {vehiculeBons.length === 0 ? (
-                              <p className="text-sm text-gray-500 italic">Aucun bon de travail pour ce vehicule.</p>
+                              <p className="text-sm text-gray-500 dark:text-gray-400 italic">Aucun bon de travail pour ce vehicule.</p>
                             ) : (
                               <div>
-                                <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                   Bons de travail ({vehiculeBons.length})
                                 </h3>
                                 <div className="grid gap-2">
                                   {vehiculeBons.map((b) => {
-                                    const st = statutLabels[b.statut] || { label: b.statut, color: "bg-gray-100 text-gray-700" };
+                                    const st = statutLabels[b.statut] || { label: b.statut, color: "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300" };
                                     return (
                                       <div
                                         key={b.id}
-                                        className="flex items-center justify-between rounded-lg bg-white border border-gray-200 px-4 py-2.5"
+                                        className="flex items-center justify-between rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2.5"
                                       >
                                         <div className="flex items-center gap-4">
                                           <span className="text-base">🔧</span>
                                           <div>
                                             <div className="flex items-center gap-2">
-                                              <span className="font-medium text-gray-900 text-sm">
+                                              <span className="font-medium text-gray-900 dark:text-gray-100 text-sm">
                                                 {(b.date_creation || "").slice(0, 10)}
                                               </span>
                                               <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${st.color}`}>
                                                 {st.label}
                                               </span>
                                               {b.mecanicien && (
-                                                <span className="text-xs text-gray-500">— {b.mecanicien}</span>
+                                                <span className="text-xs text-gray-500 dark:text-gray-400">— {b.mecanicien}</span>
                                               )}
                                               {b.chrono_ms ? (
-                                                <span className="text-xs text-blue-600 font-mono">{formatChrono(b.chrono_ms)}</span>
+                                                <span className="text-xs text-blue-600 dark:text-blue-400 font-mono">{formatChrono(b.chrono_ms)}</span>
                                               ) : null}
                                             </div>
                                             {b.symptomes && (
-                                              <p className="text-xs text-gray-500 mt-0.5 truncate max-w-md">{b.symptomes}</p>
+                                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate max-w-md">{b.symptomes}</p>
                                             )}
                                           </div>
                                         </div>
                                         {b.travaux && (
-                                          <p className="text-xs text-gray-400 truncate max-w-[200px]">{b.travaux}</p>
+                                          <p className="text-xs text-gray-400 dark:text-gray-500 truncate max-w-[200px]">{b.travaux}</p>
                                         )}
                                       </div>
                                     );
@@ -427,14 +427,14 @@ export default function VehiculesPage() {
       {/* Modal formulaire */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-            <h2 className="mb-6 text-lg font-semibold text-gray-900">
+          <div className="w-full max-w-md rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-gray-100">
               {editingVehicule ? "Modifier le vehicule" : "Nouveau vehicule"}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Client
                 </label>
                 <select
@@ -443,7 +443,7 @@ export default function VehiculesPage() {
                   onChange={(e) =>
                     setForm({ ...form, client_id: e.target.value })
                   }
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="">-- Selectionner un client --</option>
                   {clients.map((c) => (
@@ -456,7 +456,7 @@ export default function VehiculesPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Marque
                   </label>
                   <input
@@ -466,11 +466,11 @@ export default function VehiculesPage() {
                     onChange={(e) =>
                       setForm({ ...form, marque: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Modele
                   </label>
                   <input
@@ -480,14 +480,14 @@ export default function VehiculesPage() {
                     onChange={(e) =>
                       setForm({ ...form, modele: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Annee
                   </label>
                   <input
@@ -496,11 +496,11 @@ export default function VehiculesPage() {
                     onChange={(e) =>
                       setForm({ ...form, annee: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Moteur
                   </label>
                   <input
@@ -508,14 +508,14 @@ export default function VehiculesPage() {
                     placeholder="Ex: 5.3L V8, 2.0L Turbo..."
                     value={form.moteur}
                     onChange={(e) => setForm({ ...form, moteur: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     No plaque
                   </label>
                   <input
@@ -525,11 +525,11 @@ export default function VehiculesPage() {
                     onChange={(e) =>
                       setForm({ ...form, plaque: e.target.value.toUpperCase() })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Kilometrage
                   </label>
                   <input
@@ -538,13 +538,13 @@ export default function VehiculesPage() {
                     onChange={(e) =>
                       setForm({ ...form, kilometrage: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Lieu de fabrication
                 </label>
                 <input
@@ -552,12 +552,12 @@ export default function VehiculesPage() {
                   placeholder="Ex: Oshawa, Ontario..."
                   value={form.lieu_fabrication}
                   onChange={(e) => setForm({ ...form, lieu_fabrication: e.target.value })}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   VIN (NIV)
                 </label>
                 <div className="flex gap-2">
@@ -570,7 +570,7 @@ export default function VehiculesPage() {
                       setForm({ ...form, vin: e.target.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, "").slice(0, 17) });
                       setVinInfo(null);
                     }}
-                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 font-mono tracking-wider focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 font-mono tracking-wider focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                   <button
                     type="button"
@@ -582,12 +582,12 @@ export default function VehiculesPage() {
                   </button>
                 </div>
                 {form.vin.length > 0 && form.vin.length < 17 && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-1 text-xs text-red-500 dark:text-red-400">
                     Le VIN doit contenir exactement 17 caracteres ({form.vin.length}/17)
                   </p>
                 )}
                 {vinInfo && (
-                  <p className="mt-1 text-xs font-semibold text-green-600">VIN decode avec succes !</p>
+                  <p className="mt-1 text-xs font-semibold text-green-600 dark:text-green-400">VIN decode avec succes !</p>
                 )}
               </div>
 
@@ -595,7 +595,7 @@ export default function VehiculesPage() {
                 <button
                   type="button"
                   onClick={closeForm}
-                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   Annuler
                 </button>

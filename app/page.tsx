@@ -54,28 +54,28 @@ export default function DashboardPage() {
       label: "Clients",
       value: stats.clients,
       href: "/clients",
-      color: "bg-blue-50 text-blue-700",
+      color: "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400",
       icon: "👤",
     },
     {
       label: "Vehicules",
       value: stats.vehicules,
       href: "/vehicules",
-      color: "bg-green-50 text-green-700",
+      color: "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400",
       icon: "🚗",
     },
     {
       label: "RDV aujourd'hui",
       value: stats.rdvAujourdhui,
       href: "/rendez-vous",
-      color: "bg-purple-50 text-purple-700",
+      color: "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400",
       icon: "📅",
     },
     {
       label: "Factures impayees",
       value: stats.facturesImpayees,
       href: "/factures",
-      color: "bg-orange-50 text-orange-700",
+      color: "bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400",
       icon: "📄",
     },
   ];
@@ -86,19 +86,19 @@ export default function DashboardPage() {
         <h1 className="mb-2 text-2xl font-bold text-foreground">
           Tableau de bord
         </h1>
-        <p className="mb-8 text-gray-500">
+        <p className="mb-8 text-gray-500 dark:text-gray-400">
           Bienvenue sur MecaFlow
         </p>
 
         {loading ? (
-          <p className="py-12 text-center text-gray-500">Chargement...</p>
+          <p className="py-12 text-center text-gray-500 dark:text-gray-400">Chargement...</p>
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {cards.map((card) => (
               <Link
                 key={card.label}
                 href={card.href}
-                className="rounded-xl border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md"
+                className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 transition-shadow hover:shadow-md"
               >
                 <div className="mb-4 flex items-center justify-between">
                   <span className="text-2xl">{card.icon}</span>
@@ -108,7 +108,7 @@ export default function DashboardPage() {
                     {card.label}
                   </span>
                 </div>
-                <p className="text-3xl font-bold text-gray-900">{card.value}</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{card.value}</p>
               </Link>
             ))}
           </div>

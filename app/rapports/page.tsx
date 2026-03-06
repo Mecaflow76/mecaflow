@@ -258,7 +258,7 @@ export default function RapportsPage() {
   if (loading)
     return (
       <div className="min-h-screen bg-background p-8">
-        <p className="text-center text-gray-500 py-12">Chargement...</p>
+        <p className="text-center text-gray-500 dark:text-gray-400 py-12">Chargement...</p>
       </div>
     );
 
@@ -268,7 +268,7 @@ export default function RapportsPage() {
         {/* ── Header ── */}
         <div className="mb-6 flex flex-wrap items-center gap-4">
           <h1 className="text-2xl font-bold text-foreground">Rapports</h1>
-          <span className="text-sm text-gray-500">{periodLabel}</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">{periodLabel}</span>
         </div>
 
         {/* ── Period selector ── */}
@@ -287,7 +287,7 @@ export default function RapportsPage() {
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 period === val
                   ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
               }`}
             >
               {label}
@@ -300,14 +300,14 @@ export default function RapportsPage() {
                 type="date"
                 value={customFrom}
                 onChange={(e) => setCustomFrom(e.target.value)}
-                className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
               />
-              <span className="text-gray-400">au</span>
+              <span className="text-gray-400 dark:text-gray-500">au</span>
               <input
                 type="date"
                 value={customTo}
                 onChange={(e) => setCustomTo(e.target.value)}
-                className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
               />
             </div>
           )}
@@ -344,7 +344,7 @@ export default function RapportsPage() {
 
         {/* ════════════ 2. STATUT DES FACTURES ════════════ */}
         <div className="mb-8">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
             Statut des factures
           </h2>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -352,71 +352,71 @@ export default function RapportsPage() {
               label="Payees"
               count={statutStats.payee.count}
               total={statutStats.payee.total}
-              bgColor="bg-green-50"
-              borderColor="border-green-200"
-              textColor="text-green-700"
+              bgColor="bg-green-50 dark:bg-green-900/20"
+              borderColor="border-green-200 dark:border-green-800"
+              textColor="text-green-700 dark:text-green-400"
             />
             <StatusCard
               label="Envoyees"
               count={statutStats.envoyee.count}
               total={statutStats.envoyee.total}
-              bgColor="bg-yellow-50"
-              borderColor="border-yellow-200"
-              textColor="text-yellow-700"
+              bgColor="bg-yellow-50 dark:bg-yellow-900/20"
+              borderColor="border-yellow-200 dark:border-yellow-800"
+              textColor="text-yellow-700 dark:text-yellow-400"
             />
             <StatusCard
               label="Brouillons"
               count={statutStats.brouillon.count}
               total={statutStats.brouillon.total}
-              bgColor="bg-gray-50"
-              borderColor="border-gray-200"
-              textColor="text-gray-600"
+              bgColor="bg-gray-50 dark:bg-gray-800"
+              borderColor="border-gray-200 dark:border-gray-700"
+              textColor="text-gray-600 dark:text-gray-400"
             />
             <StatusCard
               label="En retard"
               count={statutStats.en_retard.count}
               total={statutStats.en_retard.total}
-              bgColor="bg-red-50"
-              borderColor="border-red-200"
-              textColor="text-red-700"
+              bgColor="bg-red-50 dark:bg-red-900/20"
+              borderColor="border-red-200 dark:border-red-800"
+              textColor="text-red-700 dark:text-red-400"
             />
           </div>
         </div>
 
         {/* ════════════ 3. MAIN D'OEUVRE ════════════ */}
         <div className="mb-8">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
             Main d&apos;oeuvre facturee
           </h2>
           <div className="mb-4 grid grid-cols-3 gap-4">
-            <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
-              <p className="text-2xl font-bold text-gray-900">
+            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 text-center">
+              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {moStats.totalH.toFixed(1)}h
               </p>
-              <p className="text-xs text-gray-500 uppercase mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">
                 Heures totales
               </p>
             </div>
-            <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
+            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 text-center">
               <p className="text-2xl font-bold text-purple-600">
                 {fmt(moStats.totalRev)}
               </p>
-              <p className="text-xs text-gray-500 uppercase mt-1">Revenu M.O.</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">Revenu M.O.</p>
             </div>
-            <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
+            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 text-center">
               <p className="text-2xl font-bold text-blue-600">
                 {fmt(moStats.tauxMoyen)}
               </p>
-              <p className="text-xs text-gray-500 uppercase mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">
                 Taux moyen /h
               </p>
             </div>
           </div>
 
           {moStats.top.length > 0 && (
-            <div className="overflow-hidden rounded-lg border border-gray-200">
+            <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+                <thead className="bg-gray-50 dark:bg-gray-900 text-xs uppercase text-gray-500 dark:text-gray-400">
                   <tr>
                     <th className="px-4 py-2 text-left">Type de travail</th>
                     <th className="px-4 py-2 text-right">Heures</th>
@@ -424,17 +424,17 @@ export default function RapportsPage() {
                     <th className="px-4 py-2 text-right">Taux moy.</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                   {moStats.top.map(([desc, data]) => (
-                    <tr key={desc} className="bg-white">
-                      <td className="px-4 py-2.5 text-gray-900">{desc}</td>
-                      <td className="px-4 py-2.5 text-right text-gray-700">
+                    <tr key={desc} className="bg-white dark:bg-gray-800">
+                      <td className="px-4 py-2.5 text-gray-900 dark:text-gray-100">{desc}</td>
+                      <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-300">
                         {data.h.toFixed(1)}h
                       </td>
-                      <td className="px-4 py-2.5 text-right font-medium text-gray-900">
+                      <td className="px-4 py-2.5 text-right font-medium text-gray-900 dark:text-gray-100">
                         {fmt(data.rev)}
                       </td>
-                      <td className="px-4 py-2.5 text-right text-gray-700">
+                      <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-300">
                         {fmt(data.h > 0 ? data.rev / data.h : 0)}/h
                       </td>
                     </tr>
@@ -447,33 +447,33 @@ export default function RapportsPage() {
 
         {/* ════════════ 4. RENTABILITE PIECES (INTERNE) ════════════ */}
         <div className="mb-8">
-          <h2 className="mb-4 text-lg font-semibold text-amber-700">
+          <h2 className="mb-4 text-lg font-semibold text-amber-700 dark:text-amber-400">
             Rentabilite pieces (interne)
           </h2>
           <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-center">
-              <p className="text-xl font-bold text-gray-900">
+            <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-4 text-center">
+              <p className="text-xl font-bold text-gray-900 dark:text-gray-100">
                 {fmt(piecesStats.totalCout)}
               </p>
-              <p className="text-xs text-gray-500 uppercase mt-1">Cout total</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">Cout total</p>
             </div>
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-center">
-              <p className="text-xl font-bold text-gray-900">
+            <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-4 text-center">
+              <p className="text-xl font-bold text-gray-900 dark:text-gray-100">
                 {fmt(piecesStats.totalVente)}
               </p>
-              <p className="text-xs text-gray-500 uppercase mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">
                 Vente totale
               </p>
             </div>
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-center">
+            <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-4 text-center">
               <p className="text-xl font-bold text-green-600">
                 {fmt(piecesStats.profit)}
               </p>
-              <p className="text-xs text-gray-500 uppercase mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">
                 Profit brut
               </p>
             </div>
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-center">
+            <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-4 text-center">
               <p
                 className={`text-xl font-bold ${
                   piecesStats.marge !== null
@@ -489,14 +489,14 @@ export default function RapportsPage() {
                   ? `${piecesStats.marge.toFixed(1)}%`
                   : "\u2014"}
               </p>
-              <p className="text-xs text-gray-500 uppercase mt-1">Marge moy.</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">Marge moy.</p>
             </div>
           </div>
 
           {piecesStats.top.length > 0 && (
-            <div className="overflow-hidden rounded-lg border border-amber-200">
+            <div className="overflow-hidden rounded-lg border border-amber-200 dark:border-amber-800">
               <table className="w-full text-sm">
-                <thead className="bg-amber-50 text-xs uppercase text-gray-500">
+                <thead className="bg-amber-50 dark:bg-amber-900/20 text-xs uppercase text-gray-500 dark:text-gray-400">
                   <tr>
                     <th className="px-4 py-2 text-left">Piece</th>
                     <th className="px-4 py-2 text-right">Qte</th>
@@ -506,7 +506,7 @@ export default function RapportsPage() {
                     <th className="px-4 py-2 text-right">Marge</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-amber-100">
+                <tbody className="divide-y divide-amber-100 dark:divide-amber-800">
                   {piecesStats.top.map(([desc, data]) => {
                     const profit = data.vente - data.cout;
                     const marge =
@@ -514,15 +514,15 @@ export default function RapportsPage() {
                         ? ((data.vente - data.cout) / data.cout) * 100
                         : null;
                     return (
-                      <tr key={desc} className="bg-white">
-                        <td className="px-4 py-2.5 text-gray-900">{desc}</td>
-                        <td className="px-4 py-2.5 text-right text-gray-700">
+                      <tr key={desc} className="bg-white dark:bg-gray-800">
+                        <td className="px-4 py-2.5 text-gray-900 dark:text-gray-100">{desc}</td>
+                        <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-300">
                           {data.qty}
                         </td>
-                        <td className="px-4 py-2.5 text-right text-gray-700">
+                        <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-300">
                           {fmt(data.cout)}
                         </td>
-                        <td className="px-4 py-2.5 text-right text-gray-700">
+                        <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-300">
                           {fmt(data.vente)}
                         </td>
                         <td className="px-4 py-2.5 text-right font-medium text-green-600">
@@ -553,7 +553,7 @@ export default function RapportsPage() {
         {/* ════════════ 5. CLIENTS LES PLUS ACTIFS ════════════ */}
         <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-2">
           <div>
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
               Clients les plus actifs
             </h2>
             {topClients.length > 0 ? (
@@ -561,7 +561,7 @@ export default function RapportsPage() {
                 {topClients.map((c, i) => (
                   <div
                     key={c.name}
-                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3"
+                    className="flex items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3"
                   >
                     <div className="flex items-center gap-3">
                       <span
@@ -577,15 +577,15 @@ export default function RapportsPage() {
                       >
                         {i + 1}
                       </span>
-                      <span className="font-medium text-gray-900">
+                      <span className="font-medium text-gray-900 dark:text-gray-100">
                         {c.name}
                       </span>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {fmt(c.total)}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         {c.nb} facture{c.nb > 1 ? "s" : ""}
                       </p>
                     </div>
@@ -593,7 +593,7 @@ export default function RapportsPage() {
                 ))}
               </div>
             ) : (
-              <p className="py-8 text-center text-sm text-gray-400">
+              <p className="py-8 text-center text-sm text-gray-400 dark:text-gray-500">
                 Aucune donnee pour cette periode
               </p>
             )}
@@ -601,7 +601,7 @@ export default function RapportsPage() {
 
           {/* ════════════ 6. PIECES LES PLUS VENDUES ════════════ */}
           <div>
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
               Pieces les plus vendues
             </h2>
             {topPieces.length > 0 ? (
@@ -609,7 +609,7 @@ export default function RapportsPage() {
                 {topPieces.map(([desc, data], i) => (
                   <div
                     key={desc}
-                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3"
+                    className="flex items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3"
                   >
                     <div className="flex items-center gap-3">
                       <span
@@ -625,13 +625,13 @@ export default function RapportsPage() {
                       >
                         {i + 1}
                       </span>
-                      <span className="font-medium text-gray-900">{desc}</span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">{desc}</span>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {fmt(data.total)}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         {data.qty} unite{data.qty > 1 ? "s" : ""}
                       </p>
                     </div>
@@ -639,7 +639,7 @@ export default function RapportsPage() {
                 ))}
               </div>
             ) : (
-              <p className="py-8 text-center text-sm text-gray-400">
+              <p className="py-8 text-center text-sm text-gray-400 dark:text-gray-500">
                 Aucune donnee pour cette periode
               </p>
             )}
@@ -661,9 +661,9 @@ function StatCard({
   color: string;
 }) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
       <p className={`text-xl font-bold ${color}`}>{value}</p>
-      <p className="mt-1 text-xs text-gray-500 uppercase">{label}</p>
+      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 uppercase">{label}</p>
     </div>
   );
 }
@@ -687,7 +687,7 @@ function StatusCard({
     <div className={`rounded-lg border ${borderColor} ${bgColor} p-4`}>
       <p className={`text-2xl font-bold ${textColor}`}>{count}</p>
       <p className={`text-xs font-medium ${textColor} mt-1`}>{label}</p>
-      <p className="mt-2 text-sm font-medium text-gray-700">{fmt(total)}</p>
+      <p className="mt-2 text-sm font-medium text-gray-700 dark:text-gray-300">{fmt(total)}</p>
     </div>
   );
 }

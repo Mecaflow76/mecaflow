@@ -358,16 +358,16 @@ export default function AgendaPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col" style={{ height: "100vh" }}>
       {/* ── Nav bar ── */}
-      <div className="flex items-center justify-between px-6 py-3 border-b border-gray-200 bg-white flex-shrink-0">
+      <div className="flex items-center justify-between px-6 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex-shrink-0">
         <button
           onClick={goPrev}
-          className="rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200"
+          className="rounded-lg bg-gray-100 dark:bg-gray-700 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
         >
           &larr; Precedent
         </button>
 
         <div className="text-center">
-          <h1 className="text-lg font-bold text-gray-900">{titre}</h1>
+          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">{titre}</h1>
         </div>
 
         <div className="flex gap-2">
@@ -379,7 +379,7 @@ export default function AgendaPage() {
           </button>
           <button
             onClick={goNext}
-            className="rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200"
+            className="rounded-lg bg-gray-100 dark:bg-gray-700 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
           >
             Suivant &rarr;
           </button>
@@ -387,14 +387,14 @@ export default function AgendaPage() {
       </div>
 
       {loading && (
-        <p className="text-center text-gray-500 py-12">Chargement...</p>
+        <p className="text-center text-gray-500 dark:text-gray-400 py-12">Chargement...</p>
       )}
 
       {!loading && (
         <>
           {/* ── Day headers ── */}
           <div
-            className="grid border-b border-gray-200 bg-gray-50 flex-shrink-0"
+            className="grid border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex-shrink-0"
             style={{ gridTemplateColumns: "44px repeat(7, 1fr)" }}
           >
             <div />
@@ -404,19 +404,19 @@ export default function AgendaPage() {
               return (
                 <div
                   key={i}
-                  className={`border-l border-gray-200 ${
+                  className={`border-l border-gray-200 dark:border-gray-700 ${
                     isToday
                       ? "bg-blue-50 text-blue-700 font-bold"
-                      : "text-gray-600"
+                      : "text-gray-600 dark:text-gray-400"
                   }`}
                 >
                   <div className="py-1.5 text-center">
                     <div className="text-xs">{JOURS[i]}</div>
-                    <div className={`text-lg leading-tight ${isToday ? "text-blue-700" : "text-gray-900"}`}>
+                    <div className={`text-lg leading-tight ${isToday ? "text-blue-700" : "text-gray-900 dark:text-gray-100"}`}>
                       {d.getDate()}
                     </div>
                   </div>
-                  <div className="flex border-t border-gray-200 text-[9px] font-semibold">
+                  <div className="flex border-t border-gray-200 dark:border-gray-700 text-[9px] font-semibold">
                     <div className="flex-1 text-center py-0.5 text-blue-600 bg-blue-50/50">
                       <button
                         onClick={() => openNewRdv(ds)}
@@ -426,7 +426,7 @@ export default function AgendaPage() {
                         Prevu +
                       </button>
                     </div>
-                    <div className="flex-1 text-center py-0.5 text-amber-600 bg-amber-50/50 border-l border-gray-200">Reel</div>
+                    <div className="flex-1 text-center py-0.5 text-amber-600 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-900/20 border-l border-gray-200 dark:border-gray-700">Reel</div>
                   </div>
                 </div>
               );
@@ -449,7 +449,7 @@ export default function AgendaPage() {
                   return (
                     <div
                       key={h}
-                      className="absolute text-[10px] text-gray-400 pr-1 text-right w-full"
+                      className="absolute text-[10px] text-gray-400 dark:text-gray-500 pr-1 text-right w-full"
                       style={{ top: `${i * 60 * PX_MIN}px` }}
                     >
                       {String(h).padStart(2, "0")}h
@@ -468,7 +468,7 @@ export default function AgendaPage() {
                 return (
                   <div
                     key={colIdx}
-                    className="relative border-l border-gray-200"
+                    className="relative border-l border-gray-200 dark:border-gray-700"
                     style={{
                       height: `${HAUTEUR}px`,
                       background: isToday
@@ -490,7 +490,7 @@ export default function AgendaPage() {
 
                     {/* Ligne de separation verticale au milieu */}
                     <div
-                      className="absolute top-0 bottom-0 border-l border-gray-200/60"
+                      className="absolute top-0 bottom-0 border-l border-gray-200/60 dark:border-gray-700/60"
                       style={{ left: "50%" }}
                     />
 
@@ -676,14 +676,14 @@ export default function AgendaPage() {
       {/* ═══════════════════ MODAL RDV ═══════════════════ */}
       {showRdvForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">
+          <div className="w-full max-w-md rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
               {editingRdv ? "Modifier le rendez-vous" : "Nouveau rendez-vous"}
             </h2>
 
             <form onSubmit={handleRdvSubmit} className="space-y-4">
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Titre *
                 </label>
                 <input
@@ -694,13 +694,13 @@ export default function AgendaPage() {
                   onChange={(e) =>
                     setRdvForm({ ...rdvForm, titre: e.target.value })
                   }
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Client
                   </label>
                   <select
@@ -708,7 +708,7 @@ export default function AgendaPage() {
                     onChange={(e) =>
                       setRdvForm({ ...rdvForm, client_id: e.target.value, vehicule_id: "" })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="">-- Aucun --</option>
                     {clients.map((c) => (
@@ -719,7 +719,7 @@ export default function AgendaPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Vehicule
                   </label>
                   <select
@@ -727,7 +727,7 @@ export default function AgendaPage() {
                     onChange={(e) =>
                       setRdvForm({ ...rdvForm, vehicule_id: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="">-- Aucun --</option>
                     {(rdvForm.client_id
@@ -743,7 +743,7 @@ export default function AgendaPage() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Statut
                 </label>
                 <select
@@ -751,7 +751,7 @@ export default function AgendaPage() {
                   onChange={(e) =>
                     setRdvForm({ ...rdvForm, statut: e.target.value })
                   }
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   {RDV_STATUTS.map((s) => (
                     <option key={s.value} value={s.value}>
@@ -763,7 +763,7 @@ export default function AgendaPage() {
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Date *
                   </label>
                   <input
@@ -773,11 +773,11 @@ export default function AgendaPage() {
                     onChange={(e) =>
                       setRdvForm({ ...rdvForm, date_rdv: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Heure debut
                   </label>
                   <input
@@ -786,11 +786,11 @@ export default function AgendaPage() {
                     onChange={(e) =>
                       setRdvForm({ ...rdvForm, heure: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Heure fin
                   </label>
                   <input
@@ -799,13 +799,13 @@ export default function AgendaPage() {
                     onChange={(e) =>
                       setRdvForm({ ...rdvForm, heure_fin: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Notes
                 </label>
                 <textarea
@@ -814,7 +814,7 @@ export default function AgendaPage() {
                   onChange={(e) =>
                     setRdvForm({ ...rdvForm, notes: e.target.value })
                   }
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
@@ -837,7 +837,7 @@ export default function AgendaPage() {
                       setShowRdvForm(false);
                       setEditingRdv(null);
                     }}
-                    className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     Annuler
                   </button>
