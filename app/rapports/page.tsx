@@ -18,6 +18,7 @@ interface Facture {
   statut: string;
   labour_rows: LabourRow[] | null;
   parts_rows: PartRow[] | null;
+  discount_pct: number;
 }
 interface LabourRow {
   desc: string;
@@ -80,7 +81,7 @@ export default function RapportsPage() {
     const [fRes, cRes] = await Promise.all([
       supabase
         .from("factures")
-        .select("id, client_id, vehicule_id, date_facture, montant_total, statut, labour_rows, parts_rows")
+        .select("id, client_id, vehicule_id, date_facture, montant_total, statut, labour_rows, parts_rows, discount_pct")
         .order("date_facture", { ascending: false }),
       supabase.from("clients").select("id, nom, prenom"),
     ]);
@@ -173,40 +174,50 @@ export default function RapportsPage() {
     return { totalH, totalRev, tauxMoyen, top };
   }, [filtered]);
 
-  /* ── Rentabilité pièces ── */
+  /* ── Rentabilité pièces (avec rabais sur marge) ── */
   const piecesStats = useMemo(() => {
-    const allParts = filtered
-      .flatMap((f) => f.parts_rows || [])
-      .filter((r) => r.desc?.trim());
-    const totalCout = allParts.reduce(
-      (s, r) => s + (r.cost || 0) * (r.qty || 0),
-      0
-    );
-    const totalVente = allParts.reduce(
-      (s, r) => s + (r.price || 0) * (r.qty || 0),
-      0
-    );
-    const profit = totalVente - totalCout;
+    let totalCout = 0;
+    let totalVente = 0;
+    let totalRabais = 0;
+    const map: Record<string, { qty: number; cout: number; vente: number }> = {};
+
+    filtered.forEach((f) => {
+      const parts = (f.parts_rows || []).filter((r) => r.desc?.trim());
+      const fCout = parts.reduce((s, r) => s + (r.cost || 0) * (r.qty || 0), 0);
+      const fVente = parts.reduce((s, r) => s + (r.price || 0) * (r.qty || 0), 0);
+      const discPct = f.discount_pct || 0;
+      const margeAmount = fVente - fCout;
+      const rabais = margeAmount > 0 ? margeAmount * (discPct / 100) : fVente * (discPct / 100);
+
+      totalCout += fCout;
+      totalVente += fVente;
+      totalRabais += rabais;
+
+      // Pour le détail par pièce, on répartit le rabais proportionnellement
+      parts.forEach((r) => {
+        if (!map[r.desc]) map[r.desc] = { qty: 0, cout: 0, vente: 0 };
+        const rVente = (r.price || 0) * (r.qty || 0);
+        const rCout = (r.cost || 0) * (r.qty || 0);
+        const rMarge = rVente - rCout;
+        const rRabais = fVente > 0 && rMarge > 0 ? rMarge * (discPct / 100) : 0;
+        map[r.desc].qty += r.qty || 0;
+        map[r.desc].cout += rCout;
+        map[r.desc].vente += rVente - rRabais;
+      });
+    });
+
+    const venteNette = totalVente - totalRabais;
+    const profit = venteNette - totalCout;
     const marge =
-      totalVente > 0 && totalCout > 0
-        ? ((totalVente - totalCout) / totalCout) * 100
+      venteNette > 0 && totalCout > 0
+        ? ((venteNette - totalCout) / totalCout) * 100
         : null;
 
-    const map: Record<
-      string,
-      { qty: number; cout: number; vente: number }
-    > = {};
-    allParts.forEach((r) => {
-      if (!map[r.desc]) map[r.desc] = { qty: 0, cout: 0, vente: 0 };
-      map[r.desc].qty += r.qty || 0;
-      map[r.desc].cout += (r.cost || 0) * (r.qty || 0);
-      map[r.desc].vente += (r.price || 0) * (r.qty || 0);
-    });
     const top = Object.entries(map)
       .sort((a, b) => (b[1].vente - b[1].cout) - (a[1].vente - a[1].cout))
       .slice(0, 5);
 
-    return { totalCout, totalVente, profit, marge, top };
+    return { totalCout, totalVente: venteNette, profit, marge, top };
   }, [filtered]);
 
   /* ── Clients actifs ── */
