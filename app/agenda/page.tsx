@@ -67,6 +67,8 @@ const RDV_STATUTS = [
   { value: "annule", label: "Annule" },
 ];
 
+type ViewMode = "3days" | "week" | "month";
+
 /* ───── Helpers ───── */
 function heureEnMin(h: string | null): number | null {
   if (!h) return null;
@@ -89,6 +91,10 @@ function formatDateStr(d: Date): string {
 
 function formatDateLabel(d: Date): string {
   return `${d.getDate()} ${MOIS[d.getMonth()].slice(0, 3).toLowerCase()}`;
+}
+
+function getDayName(d: Date): string {
+  return JOURS[(d.getDay() + 6) % 7];
 }
 
 function minEnHeure(min: number): string {
@@ -115,6 +121,7 @@ interface DragState {
 export default function AgendaPage() {
   const router = useRouter();
   const [dateRef, setDateRef] = useState(new Date());
+  const [viewMode, setViewMode] = useState<ViewMode>("week");
   const [bons, setBons] = useState<BonTravail[]>([]);
   const [rdvs, setRdvs] = useState<RendezVous[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
@@ -243,37 +250,72 @@ export default function AgendaPage() {
   }
 
   /* ── Navigation ── */
-  const lundi = useMemo(() => getLundiSemaine(dateRef), [dateRef]);
+  const visibleDays = useMemo(() => {
+    if (viewMode === "3days") {
+      const start = new Date(dateRef);
+      start.setHours(0, 0, 0, 0);
+      return Array.from({ length: 3 }, (_, i) => {
+        const d = new Date(start);
+        d.setDate(start.getDate() + i);
+        return d;
+      });
+    }
+    const monday = getLundiSemaine(dateRef);
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      return d;
+    });
+  }, [dateRef, viewMode]);
 
-  const weekDays = useMemo(() => {
+  const monthDays = useMemo(() => {
+    if (viewMode !== "month") return [];
+    const year = dateRef.getFullYear();
+    const month = dateRef.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startDay = getLundiSemaine(firstDay);
+    const endDay = new Date(lastDay);
+    const endDow = endDay.getDay();
+    if (endDow !== 0) endDay.setDate(endDay.getDate() + (7 - endDow));
     const days: Date[] = [];
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(lundi);
-      d.setDate(lundi.getDate() + i);
-      days.push(d);
+    const current = new Date(startDay);
+    while (current <= endDay) {
+      days.push(new Date(current));
+      current.setDate(current.getDate() + 1);
     }
     return days;
-  }, [lundi]);
+  }, [dateRef, viewMode]);
 
   const today = formatDateStr(new Date());
+  const colCount = viewMode === "3days" ? 3 : 7;
 
   const titre = useMemo(() => {
-    const d1 = weekDays[0];
-    const d2 = weekDays[6];
+    if (viewMode === "month") {
+      return `${MOIS[dateRef.getMonth()]} ${dateRef.getFullYear()}`;
+    }
+    const days = visibleDays;
+    if (days.length === 0) return "";
+    const d1 = days[0];
+    const d2 = days[days.length - 1];
     return `${formatDateLabel(d1)} \u2014 ${formatDateLabel(d2)} ${d2.getFullYear()}`;
-  }, [weekDays]);
+  }, [viewMode, dateRef, visibleDays]);
 
   function goToday() {
     setDateRef(new Date());
   }
   function goPrev() {
     const d = new Date(dateRef);
-    d.setDate(d.getDate() - 7);
+    if (viewMode === "3days") d.setDate(d.getDate() - 3);
+    else if (viewMode === "week") d.setDate(d.getDate() - 7);
+    else d.setMonth(d.getMonth() - 1);
     setDateRef(d);
   }
   function goNext() {
     const d = new Date(dateRef);
-    d.setDate(d.getDate() + 7);
+    if (viewMode === "3days") d.setDate(d.getDate() + 3);
+    else if (viewMode === "week") d.setDate(d.getDate() + 7);
+    else d.setMonth(d.getMonth() + 1);
     setDateRef(d);
   }
 
@@ -359,18 +401,13 @@ export default function AgendaPage() {
     <div className="min-h-screen bg-background flex flex-col" style={{ height: "100vh" }}>
       {/* ── Nav bar ── */}
       <div className="flex items-center justify-between px-6 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex-shrink-0">
-        <button
-          onClick={goPrev}
-          className="rounded-lg bg-gray-100 dark:bg-gray-700 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-        >
-          &larr; Precedent
-        </button>
-
-        <div className="text-center">
-          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">{titre}</h1>
-        </div>
-
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={goPrev}
+            className="rounded-lg bg-gray-100 dark:bg-gray-700 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+          >
+            &larr;
+          </button>
           <button
             onClick={goToday}
             className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
@@ -381,8 +418,30 @@ export default function AgendaPage() {
             onClick={goNext}
             className="rounded-lg bg-gray-100 dark:bg-gray-700 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
           >
-            Suivant &rarr;
+            &rarr;
           </button>
+        </div>
+
+        <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">{titre}</h1>
+
+        <div className="flex gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-0.5">
+          {([
+            { key: "3days" as ViewMode, label: "3 jours" },
+            { key: "week" as ViewMode, label: "Semaine" },
+            { key: "month" as ViewMode, label: "Mois" },
+          ]).map((v) => (
+            <button
+              key={v.key}
+              onClick={() => setViewMode(v.key)}
+              className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
+                viewMode === v.key
+                  ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-sm"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+              }`}
+            >
+              {v.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -390,15 +449,15 @@ export default function AgendaPage() {
         <p className="text-center text-gray-500 dark:text-gray-400 py-12">Chargement...</p>
       )}
 
-      {!loading && (
+      {!loading && viewMode !== "month" && (
         <>
           {/* ── Day headers ── */}
           <div
             className="grid border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex-shrink-0"
-            style={{ gridTemplateColumns: "44px repeat(7, 1fr)" }}
+            style={{ gridTemplateColumns: `44px repeat(${colCount}, 1fr)` }}
           >
             <div />
-            {weekDays.map((d, i) => {
+            {visibleDays.map((d, i) => {
               const ds = formatDateStr(d);
               const isToday = ds === today;
               return (
@@ -411,7 +470,7 @@ export default function AgendaPage() {
                   }`}
                 >
                   <div className="py-1.5 text-center">
-                    <div className="text-xs">{JOURS[i]}</div>
+                    <div className="text-xs">{getDayName(d)}</div>
                     <div className={`text-lg leading-tight ${isToday ? "text-blue-700" : "text-gray-900 dark:text-gray-100"}`}>
                       {d.getDate()}
                     </div>
@@ -438,7 +497,7 @@ export default function AgendaPage() {
             <div
               className="grid relative"
               style={{
-                gridTemplateColumns: "44px repeat(7, 1fr)",
+                gridTemplateColumns: `44px repeat(${colCount}, 1fr)`,
                 height: `${HAUTEUR}px`,
               }}
             >
@@ -459,7 +518,7 @@ export default function AgendaPage() {
               </div>
 
               {/* Day columns */}
-              {weekDays.map((d, colIdx) => {
+              {visibleDays.map((d, colIdx) => {
                 const ds = formatDateStr(d);
                 const isToday = ds === today;
                 const dayBons = getBonsForDate(ds);
@@ -671,6 +730,86 @@ export default function AgendaPage() {
             </div>
           </div>
         </>
+      )}
+
+      {/* ── Vue mensuelle ── */}
+      {!loading && viewMode === "month" && (
+        <div className="flex-1 overflow-y-auto p-4">
+          <div className="grid grid-cols-7 gap-px bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden">
+            {/* En-têtes jours */}
+            {JOURS.map((j) => (
+              <div key={j} className="bg-gray-50 dark:bg-gray-800 text-center py-2 text-xs font-semibold text-gray-600 dark:text-gray-400">
+                {j}
+              </div>
+            ))}
+            {/* Cellules jours */}
+            {monthDays.map((d, i) => {
+              const ds = formatDateStr(d);
+              const isToday = ds === today;
+              const isCurrentMonth = d.getMonth() === dateRef.getMonth();
+              const dayBons = getBonsForDate(ds);
+              const dayRdvs = getRdvsForDate(ds);
+              return (
+                <div
+                  key={i}
+                  className={`min-h-[100px] p-1.5 ${
+                    isCurrentMonth
+                      ? "bg-white dark:bg-gray-800"
+                      : "bg-gray-50/50 dark:bg-gray-800/50"
+                  } ${isToday ? "ring-2 ring-blue-500 ring-inset" : ""}`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span
+                      className={`text-xs font-medium ${
+                        isToday
+                          ? "bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                          : isCurrentMonth
+                            ? "text-gray-700 dark:text-gray-300"
+                            : "text-gray-400 dark:text-gray-600"
+                      }`}
+                    >
+                      {d.getDate()}
+                    </span>
+                    {isCurrentMonth && (
+                      <button
+                        onClick={() => openNewRdv(ds)}
+                        className="text-blue-500 hover:text-blue-700 text-xs font-bold leading-none"
+                        title="Ajouter un rendez-vous"
+                      >
+                        +
+                      </button>
+                    )}
+                  </div>
+                  {dayRdvs.map((rdv) => (
+                    <div
+                      key={`r-${rdv.id}`}
+                      className="text-[10px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded px-1 py-0.5 mb-0.5 truncate cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-900/50"
+                      onClick={() => openEditRdv(rdv)}
+                      title={`${rdv.titre} (${rdv.heure} - ${rdv.heure_fin})`}
+                    >
+                      {rdv.heure?.slice(0, 5)} {rdv.titre || "RDV"}
+                    </div>
+                  ))}
+                  {dayBons.map((bon) => {
+                    const clientName = bon.clients
+                      ? `${bon.clients.prenom} ${bon.clients.nom}`
+                      : "Bon";
+                    return (
+                      <div
+                        key={`b-${bon.id}`}
+                        className="text-[10px] bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded px-1 py-0.5 mb-0.5 truncate cursor-pointer hover:bg-amber-200 dark:hover:bg-amber-900/50"
+                        onClick={() => router.push(`/bons-travail?edit_id=${bon.id}`)}
+                        title={clientName}
+                      >
+                        {bon.heure_debut?.slice(0, 5)} {clientName}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       )}
 
       {/* ═══════════════════ MODAL RDV ═══════════════════ */}
