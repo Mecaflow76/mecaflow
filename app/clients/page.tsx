@@ -151,13 +151,31 @@ export default function ClientsPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Supprimer ce client ?")) return;
+    const nbVeh = getClientVehicules(id).length;
+    const msg = nbVeh > 0
+      ? `Supprimer ce client ET ses ${nbVeh} véhicule(s), factures, bons de travail et rendez-vous associés ?\n\nCette action est irréversible.`
+      : "Supprimer ce client ?";
+    if (!confirm(msg)) return;
+
+    // Cascade : supprimer les enregistrements liés avant le client
+    const vehIds = getClientVehicules(id).map((v) => v.id);
+    if (vehIds.length > 0) {
+      await supabase.from("factures").delete().in("vehicule_id", vehIds);
+      await supabase.from("bons_travail").delete().in("vehicule_id", vehIds);
+      await supabase.from("rendezvous").delete().in("vehicule_id", vehIds);
+    }
+    // Supprimer aussi ceux liés directement au client_id (sans véhicule)
+    await supabase.from("factures").delete().eq("client_id", id);
+    await supabase.from("bons_travail").delete().eq("client_id", id);
+    await supabase.from("rendezvous").delete().eq("client_id", id);
+    await supabase.from("vehicules").delete().eq("client_id", id);
 
     const { error } = await supabase.from("clients").delete().eq("id", id);
     if (error) {
       setError(error.message);
     } else {
       fetchClients();
+      fetchVehicules();
     }
   }
 

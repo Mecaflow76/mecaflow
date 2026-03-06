@@ -233,13 +233,23 @@ export default function VehiculesPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Supprimer ce vehicule ?")) return;
+    const vBons = getVehiculeBons(id);
+    const msg = vBons.length > 0
+      ? `Supprimer ce véhicule ET ses ${vBons.length} bon(s) de travail, factures et rendez-vous associés ?\n\nCette action est irréversible.`
+      : "Supprimer ce véhicule et toutes ses données associées ?";
+    if (!confirm(msg)) return;
+
+    // Cascade : supprimer les enregistrements liés avant le véhicule
+    await supabase.from("factures").delete().eq("vehicule_id", id);
+    await supabase.from("bons_travail").delete().eq("vehicule_id", id);
+    await supabase.from("rendezvous").delete().eq("vehicule_id", id);
 
     const { error } = await supabase.from("vehicules").delete().eq("id", id);
     if (error) {
       setError(error.message);
     } else {
       fetchVehicules();
+      fetchBons();
     }
   }
 
