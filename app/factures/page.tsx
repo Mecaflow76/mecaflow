@@ -532,12 +532,21 @@ function FacturesPage() {
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
           <div className="my-8 w-full max-w-4xl rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl">
-            {/* En-tête impression */}
-            <div className="hidden print:block mb-6 text-center border-b border-gray-300 pb-4">
-              <h1 className="text-2xl font-bold">Garage Lagarde</h1>
-              <p className="text-sm text-gray-600">2232 Rang Des Continuations, St-Jacques, QC J0K 2R0</p>
-              <p className="text-sm text-gray-600">(450) 750-6862 — garagelagarde@outlook.com</p>
-              <p className="mt-2 text-lg font-semibold">FACTURE</p>
+            {/* ═══ En-tête impression PRO ═══ */}
+            <div className="hidden print:block mb-0 print-header-pro">
+              {/* Bandeau garage bleu foncé */}
+              <div style={{ background: "#1e3a5f", padding: "20px 24px", textAlign: "center", borderRadius: "8px 8px 0 0" }}>
+                <h1 style={{ margin: 0, color: "#ffffff", fontSize: "22px", fontWeight: 700, letterSpacing: "1px" }}>GARAGE LAGARDE</h1>
+                <p style={{ margin: "6px 0 0", color: "#93c5fd", fontSize: "12px" }}>
+                  2232 Rang Des Continuations, St-Jacques, QC J0K 2R0<br />
+                  (450) 750-6862 — garagelagarde@outlook.com
+                </p>
+              </div>
+              {/* Bande FACTURE bleue */}
+              <div style={{ background: "#2563eb", padding: "8px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ color: "#ffffff", fontWeight: 700, fontSize: "15px" }}>FACTURE</span>
+                <span style={{ color: "#bfdbfe", fontSize: "13px" }}>{form.date_facture}</span>
+              </div>
             </div>
             <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-gray-100 print:hidden">
               {editingFacture ? "Modifier la facture" : "Nouvelle facture"}
@@ -549,20 +558,20 @@ function FacturesPage() {
                 const sc = clients.find((c) => c.id === form.client_id);
                 const sv = vehicules.find((v) => v.id === form.vehicule_id);
                 return (
-                  <div className="hidden print:grid grid-cols-3 gap-4 text-sm">
-                    <div>
-                      <span className="font-semibold">Client :</span>{" "}
-                      {sc ? `${sc.prenom} ${sc.nom}` : "\u2014"}
-                    </div>
-                    <div>
-                      <span className="font-semibold">Vehicule :</span>{" "}
-                      {sv
-                        ? `${sv.marque} ${sv.modele}${sv.plaque ? ` \u2014 ${sv.plaque}` : ""}`
-                        : "\u2014"}
-                    </div>
-                    <div>
-                      <span className="font-semibold">Date :</span>{" "}
-                      {form.date_facture}
+                  <div className="hidden print:block" style={{ padding: "16px 0", borderBottom: "1px solid #e5e7eb" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <div>
+                        <p style={{ margin: "0 0 3px", fontSize: "11px", textTransform: "uppercase", color: "#6b7280", fontWeight: 600 }}>Client</p>
+                        <p style={{ margin: 0, fontSize: "15px", fontWeight: 600 }}>{sc ? `${sc.prenom} ${sc.nom}` : "\u2014"}</p>
+                      </div>
+                      {sv && (
+                        <div>
+                          <p style={{ margin: "0 0 3px", fontSize: "11px", textTransform: "uppercase", color: "#6b7280", fontWeight: 600 }}>Vehicule</p>
+                          <p style={{ margin: 0, fontSize: "13px" }}>
+                            {sv.marque} {sv.modele}{sv.plaque ? ` — ${sv.plaque}` : ""}{sv.vin ? ` (VIN: ${sv.vin})` : ""}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
@@ -723,7 +732,7 @@ function FacturesPage() {
               {/* ════════════ MAIN D'OEUVRE ════════════ */}
               <div>
                 <div className="mb-2">
-                  <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                  <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 print:uppercase print:text-xs print:text-gray-500 print:tracking-wide">
                     Main d&apos;oeuvre
                   </h3>
                 </div>
@@ -815,7 +824,7 @@ function FacturesPage() {
               {/* ════════════ PIECES ════════════ */}
               <div>
                 <div className="mb-2">
-                  <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                  <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 print:uppercase print:text-xs print:text-gray-500 print:tracking-wide">
                     Pieces
                   </h3>
                 </div>
@@ -1127,6 +1136,14 @@ function FacturesPage() {
                     : `❌ ${emailResult.error}`}
                 </div>
               )}
+
+              {/* ═══ Pied de page impression PRO ═══ */}
+              <div className="hidden print:block print-footer-pro" style={{ marginTop: "24px", background: "#f9fafb", padding: "16px 24px", textAlign: "center", borderTop: "1px solid #e5e7eb", borderRadius: "0 0 8px 8px" }}>
+                <p style={{ margin: "0 0 4px", fontWeight: 600, color: "#374151", fontSize: "14px" }}>Merci de votre confiance!</p>
+                <p style={{ margin: 0, fontSize: "12px", color: "#6b7280" }}>
+                  Garage Lagarde — (450) 750-6862 — garagelagarde@outlook.com
+                </p>
+              </div>
 
               {/* ── Buttons ── */}
               <div className="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-4 print:hidden">
