@@ -173,8 +173,9 @@ function FacturesPage() {
     const partsCost = partsRows.reduce((s, r) => s + (parseFloat(String(r.cost)) || 0) * r.qty, 0);
     const sub = labourTotal + partsTotal;
     const discPct = parseFloat(form.discount_pct) || 0;
-    // Rabais sur le prix detail des pieces
-    const disc = partsTotal * (discPct / 100);
+    // Rabais sur la marge (profit) des pieces
+    const margeAmount = partsTotal - partsCost;
+    const disc = margeAmount > 0 ? margeAmount * (discPct / 100) : 0;
     const dep = parseFloat(form.deposit) || 0;
     const taxable = Math.max(0, sub - disc);
     const tps = taxable * 0.05;
@@ -932,7 +933,7 @@ function FacturesPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Rabais sur pieces (%)
+                        Rabais sur marge (%)
                       </label>
                       <input
                         type="number"
