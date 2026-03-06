@@ -121,6 +121,8 @@ function FacturesPage() {
         client_id: clientId || "",
         vehicule_id: vehiculeId || "",
       });
+      setLabourRows([{ id: uid(), desc: "", qty: 1, rate: DEFAULT_RATE }]);
+      setPartsRows([{ id: uid(), desc: "", num: "", qty: 1, cost: "", price: "" }]);
       setShowForm(true);
     }
   }, [searchParams]);
@@ -196,8 +198,8 @@ function FacturesPage() {
   function openNew() {
     setEditingFacture(null);
     setForm(emptyForm);
-    setLabourRows([]);
-    setPartsRows([]);
+    setLabourRows([{ id: uid(), desc: "", qty: 1, rate: DEFAULT_RATE }]);
+    setPartsRows([{ id: uid(), desc: "", num: "", qty: 1, cost: "", price: "" }]);
     setShowForm(true);
   }
 
@@ -615,19 +617,11 @@ function FacturesPage() {
 
               {/* ════════════ MAIN D'OEUVRE ════════════ */}
               <div>
-                <div className="mb-2 flex items-center justify-between">
+                <div className="mb-2">
                   <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
                     Main d&apos;oeuvre
                   </h3>
-                  <button
-                    type="button"
-                    onClick={addLabour}
-                    className="rounded bg-blue-50 dark:bg-blue-900/30 px-3 py-1 text-xs font-medium text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50"
-                  >
-                    + Ajouter ligne
-                  </button>
                 </div>
-                {labourRows.length > 0 && (
                   <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
                     <table className="w-full text-sm">
                       <thead className="bg-gray-50 dark:bg-gray-900 text-xs text-gray-500 dark:text-gray-400">
@@ -700,32 +694,26 @@ function FacturesPage() {
                             </td>
                           </tr>
                         ))}
+                        <tr
+                          className="cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                          onClick={addLabour}
+                        >
+                          <td colSpan={5} className="px-3 py-2 text-center text-xs text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400">
+                            + Ajouter une ligne
+                          </td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
-                )}
-                {labourRows.length === 0 && (
-                  <p className="py-3 text-center text-xs text-gray-400 dark:text-gray-500">
-                    Aucune ligne de main d&apos;oeuvre
-                  </p>
-                )}
               </div>
 
               {/* ════════════ PIECES ════════════ */}
               <div>
-                <div className="mb-2 flex items-center justify-between">
+                <div className="mb-2">
                   <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
                     Pieces
                   </h3>
-                  <button
-                    type="button"
-                    onClick={addPart}
-                    className="rounded bg-blue-50 dark:bg-blue-900/30 px-3 py-1 text-xs font-medium text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50"
-                  >
-                    + Ajouter piece
-                  </button>
                 </div>
-                {partsRows.length > 0 && (
                   <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
                     <table className="w-full text-sm">
                       <thead className="bg-gray-50 dark:bg-gray-900 text-xs text-gray-500 dark:text-gray-400">
@@ -855,15 +843,17 @@ function FacturesPage() {
                             </tr>
                           );
                         })}
+                        <tr
+                          className="cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                          onClick={addPart}
+                        >
+                          <td colSpan={8} className="px-3 py-2 text-center text-xs text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400">
+                            + Ajouter une piece
+                          </td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
-                )}
-                {partsRows.length === 0 && (
-                  <p className="py-3 text-center text-xs text-gray-400 dark:text-gray-500">
-                    Aucune piece
-                  </p>
-                )}
               </div>
 
               {/* ════════════ TOTAUX & OPTIONS ════════════ */}
