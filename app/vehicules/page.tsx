@@ -530,23 +530,6 @@ export default function VehiculesPage() {
                 </div>
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700">
-                    Couleur
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ex: Noir, Blanc..."
-                    value={form.couleur}
-                    onChange={(e) =>
-                      setForm({ ...form, couleur: e.target.value })
-                    }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
                     Kilometrage
                   </label>
                   <input
@@ -558,18 +541,19 @@ export default function VehiculesPage() {
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
-                    Lieu de fabrication
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ex: Oshawa, Ontario..."
-                    value={form.lieu_fabrication}
-                    onChange={(e) => setForm({ ...form, lieu_fabrication: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  Lieu de fabrication
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex: Oshawa, Ontario..."
+                  value={form.lieu_fabrication}
+                  onChange={(e) => setForm({ ...form, lieu_fabrication: e.target.value })}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
               </div>
 
               <div>
