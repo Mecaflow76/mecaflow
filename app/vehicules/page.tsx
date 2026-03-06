@@ -501,6 +501,21 @@ export default function VehiculesPage() {
                 </div>
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Moteur
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ex: 5.3L V8, 2.0L Turbo..."
+                    value={form.moteur}
+                    onChange={(e) => setForm({ ...form, moteur: e.target.value })}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
                     No plaque
                   </label>
                   <input
@@ -509,6 +524,20 @@ export default function VehiculesPage() {
                     value={form.plaque}
                     onChange={(e) =>
                       setForm({ ...form, plaque: e.target.value.toUpperCase() })
+                    }
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Couleur
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Noir, Blanc..."
+                    value={form.couleur}
+                    onChange={(e) =>
+                      setForm({ ...form, couleur: e.target.value })
                     }
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
@@ -531,15 +560,13 @@ export default function VehiculesPage() {
                 </div>
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700">
-                    Couleur
+                    Lieu de fabrication
                   </label>
                   <input
                     type="text"
-                    placeholder="Ex: Noir, Blanc..."
-                    value={form.couleur}
-                    onChange={(e) =>
-                      setForm({ ...form, couleur: e.target.value })
-                    }
+                    placeholder="Ex: Oshawa, Ontario..."
+                    value={form.lieu_fabrication}
+                    onChange={(e) => setForm({ ...form, lieu_fabrication: e.target.value })}
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
@@ -578,32 +605,6 @@ export default function VehiculesPage() {
                 {vinInfo && (
                   <p className="mt-1 text-xs font-semibold text-green-600">VIN decode avec succes !</p>
                 )}
-                <div className="grid grid-cols-2 gap-4 mt-3">
-                  <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
-                      Moteur
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Ex: 5.3L V8, 2.0L Turbo..."
-                      value={form.moteur}
-                      onChange={(e) => setForm({ ...form, moteur: e.target.value })}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
-                      Lieu de fabrication
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Ex: Oshawa, Ontario..."
-                      value={form.lieu_fabrication}
-                      onChange={(e) => setForm({ ...form, lieu_fabrication: e.target.value })}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
               </div>
 
               <div className="flex justify-end gap-3 pt-2">
