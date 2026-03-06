@@ -16,6 +16,9 @@ interface Vehicule {
   modele: string;
   plaque: string;
   client_id: string;
+  vin: string;
+  moteur: string;
+  lieu_fabrication: string;
 }
 interface LabourRow {
   id: string;
@@ -139,7 +142,7 @@ function FacturesPage() {
     const { data, error } = await supabase
       .from("factures")
       .select(
-        "*, clients(id, nom, prenom), vehicules(id, marque, modele, plaque)"
+        "*, clients(id, nom, prenom), vehicules(id, marque, modele, plaque, vin, moteur, lieu_fabrication)"
       )
       .order("date_facture", { ascending: false });
     if (error) setError(error.message);
@@ -158,7 +161,7 @@ function FacturesPage() {
   async function fetchVehicules() {
     const { data } = await supabase
       .from("vehicules")
-      .select("id, marque, modele, plaque, client_id")
+      .select("id, marque, modele, plaque, client_id, vin, moteur, lieu_fabrication")
       .order("marque");
     setVehicules(data || []);
   }
@@ -553,6 +556,19 @@ function FacturesPage() {
                   />
                 </div>
               </div>
+
+              {/* ── Info vehicule ── */}
+              {form.vehicule_id && (() => {
+                const v = vehicules.find((x) => x.id === form.vehicule_id);
+                if (!v || (!v.vin && !v.moteur && !v.lieu_fabrication)) return null;
+                return (
+                  <div className="flex flex-wrap gap-4 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 px-4 py-2.5 text-xs text-gray-600 dark:text-gray-400">
+                    {v.vin && <span><strong className="text-gray-700 dark:text-gray-300">VIN :</strong> {v.vin}</span>}
+                    {v.moteur && <span><strong className="text-gray-700 dark:text-gray-300">Moteur :</strong> {v.moteur}</span>}
+                    {v.lieu_fabrication && <span><strong className="text-gray-700 dark:text-gray-300">Lieu fab. :</strong> {v.lieu_fabrication}</span>}
+                  </div>
+                );
+              })()}
 
               <div className="grid grid-cols-3 gap-4">
                 <div>

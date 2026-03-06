@@ -16,6 +16,9 @@ interface Vehicule {
   marque: string;
   modele: string;
   plaque: string;
+  vin: string;
+  moteur: string;
+  lieu_fabrication: string;
 }
 
 interface ChronoSegment {
@@ -279,7 +282,7 @@ function BonsTravailPage() {
     const { data, error } = await supabase
       .from("bons_travail")
       .select(
-        "*, chrono_segments, clients(id, nom, prenom), vehicules(id, marque, modele, plaque)"
+        "*, chrono_segments, clients(id, nom, prenom), vehicules(id, marque, modele, plaque, vin, moteur, lieu_fabrication)"
       )
       .order("date_creation", { ascending: false });
 
@@ -299,7 +302,7 @@ function BonsTravailPage() {
   async function fetchVehicules() {
     const { data } = await supabase
       .from("vehicules")
-      .select("id, marque, modele, plaque")
+      .select("id, marque, modele, plaque, vin, moteur, lieu_fabrication")
       .order("marque");
     setVehicules(data || []);
   }
@@ -623,6 +626,19 @@ function BonsTravailPage() {
                   </select>
                 </div>
               </div>
+
+              {/* ── Info vehicule ── */}
+              {form.vehicule_id && (() => {
+                const v = vehicules.find((x) => x.id === form.vehicule_id);
+                if (!v || (!v.vin && !v.moteur && !v.lieu_fabrication)) return null;
+                return (
+                  <div className="flex flex-wrap gap-4 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 px-4 py-2.5 text-xs text-gray-600 dark:text-gray-400">
+                    {v.vin && <span><strong className="text-gray-700 dark:text-gray-300">VIN :</strong> {v.vin}</span>}
+                    {v.moteur && <span><strong className="text-gray-700 dark:text-gray-300">Moteur :</strong> {v.moteur}</span>}
+                    {v.lieu_fabrication && <span><strong className="text-gray-700 dark:text-gray-300">Lieu fab. :</strong> {v.lieu_fabrication}</span>}
+                  </div>
+                );
+              })()}
 
               {/* Date, heures, km */}
               <div className="grid grid-cols-4 gap-4">
