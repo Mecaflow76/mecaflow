@@ -750,7 +750,7 @@ function FacturesPage() {
                           <th className="px-3 py-2 text-center" style={{ width: "8%" }}>
                             Qte
                           </th>
-                          <th className="px-3 py-2 text-center" style={{ width: "13%" }}>
+                          <th className="px-3 py-2 text-center print:hidden" style={{ width: "13%" }}>
                             <span title="Cout interne (non visible au client)">
                               Cout
                             </span>
@@ -758,7 +758,7 @@ function FacturesPage() {
                           <th className="px-3 py-2 text-center" style={{ width: "13%" }}>
                             Prix unit.
                           </th>
-                          <th className="px-3 py-2 text-right" style={{ width: "10%" }}>
+                          <th className="px-3 py-2 text-right print:hidden" style={{ width: "10%" }}>
                             Marge
                           </th>
                           <th className="px-3 py-2 text-right" style={{ width: "12%" }}>
@@ -820,7 +820,7 @@ function FacturesPage() {
                                   className="w-full rounded border border-gray-200 px-2 py-1.5 text-center text-sm focus:border-blue-500 focus:outline-none"
                                 />
                               </td>
-                              <td className="px-2 py-1.5">
+                              <td className="px-2 py-1.5 print:hidden">
                                 <input
                                   type="number"
                                   step="0.01"
@@ -846,7 +846,7 @@ function FacturesPage() {
                                 />
                               </td>
                               <td
-                                className={`px-3 py-1.5 text-right text-sm font-medium ${margeColor}`}
+                                className={`px-3 py-1.5 text-right text-sm font-medium print:hidden ${margeColor}`}
                               >
                                 {marge !== null ? `${marge}%` : "\u2014"}
                               </td>
@@ -933,7 +933,7 @@ function FacturesPage() {
                     />
                   </div>
 
-                  <div>
+                  <div className="print:hidden">
                     <label className="mb-1 block text-sm font-medium text-amber-700 dark:text-amber-400">
                       Notes internes (jamais imprime)
                     </label>
@@ -960,7 +960,7 @@ function FacturesPage() {
                       <span className="font-medium">{fmt(totals.partsTotal)}</span>
                     </div>
                     {margeAvantRabais !== null && (
-                      <div className="flex justify-between text-xs">
+                      <div className="flex justify-between text-xs print:hidden">
                         <span className="text-amber-600">
                           Marge pieces{margeApresRabais !== null ? " (avant rabais)" : ""}
                         </span>
@@ -970,7 +970,7 @@ function FacturesPage() {
                       </div>
                     )}
                     {margeApresRabais !== null && (
-                      <div className="flex justify-between text-xs">
+                      <div className="flex justify-between text-xs print:hidden">
                         <span className="text-red-500 dark:text-red-400">
                           Marge après rabais
                         </span>
@@ -987,7 +987,7 @@ function FacturesPage() {
                     {totals.disc > 0 && (
                       <div className="flex justify-between text-red-600 dark:text-red-400">
                         <span>
-                          Rabais ({totals.discPct}% marge)
+                          Rabais<span className="print:hidden"> ({totals.discPct}% marge)</span><span className="hidden print:inline"> ({totals.discPct}%)</span>
                         </span>
                         <span>-{fmt(totals.disc)}</span>
                       </div>
