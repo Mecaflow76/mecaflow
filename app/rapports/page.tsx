@@ -174,7 +174,7 @@ export default function RapportsPage() {
     return { totalH, totalRev, tauxMoyen, top };
   }, [filtered]);
 
-  /* ── Rentabilité pièces (avec rabais sur marge) ── */
+  /* ── Rentabilité pièces (avec rabais sur prix détail) ── */
   const piecesStats = useMemo(() => {
     let totalCout = 0;
     let totalVente = 0;
@@ -186,8 +186,7 @@ export default function RapportsPage() {
       const fCout = parts.reduce((s, r) => s + (r.cost || 0) * (r.qty || 0), 0);
       const fVente = parts.reduce((s, r) => s + (r.price || 0) * (r.qty || 0), 0);
       const discPct = f.discount_pct || 0;
-      const margeAmount = fVente - fCout;
-      const rabais = margeAmount > 0 ? margeAmount * (discPct / 100) : fVente * (discPct / 100);
+      const rabais = fVente * (discPct / 100);
 
       totalCout += fCout;
       totalVente += fVente;
@@ -198,8 +197,7 @@ export default function RapportsPage() {
         if (!map[r.desc]) map[r.desc] = { qty: 0, cout: 0, vente: 0 };
         const rVente = (r.price || 0) * (r.qty || 0);
         const rCout = (r.cost || 0) * (r.qty || 0);
-        const rMarge = rVente - rCout;
-        const rRabais = fVente > 0 && rMarge > 0 ? rMarge * (discPct / 100) : 0;
+        const rRabais = fVente > 0 ? rVente * (discPct / 100) : 0;
         map[r.desc].qty += r.qty || 0;
         map[r.desc].cout += rCout;
         map[r.desc].vente += rVente - rRabais;
