@@ -44,6 +44,20 @@ function formatTelephone(value: string): string {
   return `(${digits.slice(0, 3)})${digits.slice(3, 6)}-${digits.slice(6)}`;
 }
 
+/** Capitalize first letter of each word, including after hyphens: "st-jacques" → "St-Jacques" */
+function formatVille(value: string): string {
+  return value.replace(/(?:^|[\s-])([a-zA-ZÀ-ÿ])/g, (match) =>
+    match.toUpperCase()
+  );
+}
+
+/** Format Canadian postal code: "jok2r0" → "J0K 2R0" */
+function formatCodePostal(value: string): string {
+  const clean = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 6);
+  if (clean.length <= 3) return clean;
+  return clean.slice(0, 3) + " " + clean.slice(3);
+}
+
 export default function ClientsPage() {
   const router = useRouter();
   const [clients, setClients] = useState<Client[]>([]);
@@ -358,7 +372,7 @@ export default function ClientsPage() {
                     type="text"
                     value={form.ville}
                     onChange={(e) =>
-                      setForm({ ...form, ville: e.target.value })
+                      setForm({ ...form, ville: formatVille(e.target.value) })
                     }
                     className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
@@ -369,9 +383,10 @@ export default function ClientsPage() {
                   </label>
                   <input
                     type="text"
+                    placeholder="J0K 2R0"
                     value={form.code_postal}
                     onChange={(e) =>
-                      setForm({ ...form, code_postal: e.target.value })
+                      setForm({ ...form, code_postal: formatCodePostal(e.target.value) })
                     }
                     className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
