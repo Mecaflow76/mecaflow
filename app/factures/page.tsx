@@ -382,7 +382,7 @@ function FacturesPage() {
   /* ═══════════════════════════════════════ RENDER ═══════════════════════════════════════ */
   return (
     <div className="min-h-screen bg-background p-8">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-6xl print:hidden">
         {/* ── Header ── */}
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -509,8 +509,32 @@ function FacturesPage() {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* ── En-tete ── */}
-              <div className="grid grid-cols-3 gap-4">
+              {/* ── En-tete impression (texte statique) ── */}
+              {(() => {
+                const sc = clients.find((c) => c.id === form.client_id);
+                const sv = vehicules.find((v) => v.id === form.vehicule_id);
+                return (
+                  <div className="hidden print:grid grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <span className="font-semibold">Client :</span>{" "}
+                      {sc ? `${sc.prenom} ${sc.nom}` : "\u2014"}
+                    </div>
+                    <div>
+                      <span className="font-semibold">Vehicule :</span>{" "}
+                      {sv
+                        ? `${sv.marque} ${sv.modele}${sv.plaque ? ` \u2014 ${sv.plaque}` : ""}`
+                        : "\u2014"}
+                    </div>
+                    <div>
+                      <span className="font-semibold">Date :</span>{" "}
+                      {form.date_facture}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* ── En-tete ecran (selects) ── */}
+              <div className="grid grid-cols-3 gap-4 print:hidden">
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Client *
@@ -584,7 +608,22 @@ function FacturesPage() {
                 );
               })()}
 
-              <div className="grid grid-cols-3 gap-4">
+              {/* Km/Garantie impression */}
+              <div className="hidden print:flex print:gap-6 text-sm">
+                {form.km && (
+                  <span>
+                    <span className="font-semibold">Kilometrage :</span> {form.km} km
+                  </span>
+                )}
+                {form.garantie && (
+                  <span>
+                    <span className="font-semibold">Garantie :</span> {form.garantie}
+                  </span>
+                )}
+              </div>
+
+              {/* Km/Statut/Garantie ecran */}
+              <div className="grid grid-cols-3 gap-4 print:hidden">
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Kilometrage
@@ -632,9 +671,10 @@ function FacturesPage() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300 print:hidden">
                   Description des travaux
                 </label>
+                <span className="hidden print:block text-sm font-semibold mb-1">Description des travaux</span>
                 <textarea
                   rows={2}
                   value={form.description}
@@ -668,7 +708,7 @@ function FacturesPage() {
                           <th className="px-3 py-2 text-right" style={{ width: "16%" }}>
                             Sous-total
                           </th>
-                          <th className="px-3 py-2 text-center" style={{ width: "8%" }}></th>
+                          <th className="px-3 py-2 text-center print:hidden" style={{ width: "8%" }}></th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -712,7 +752,7 @@ function FacturesPage() {
                             <td className="px-3 py-1.5 text-right text-sm font-medium text-gray-900 dark:text-gray-100">
                               {fmt(r.qty * r.rate)}
                             </td>
-                            <td className="px-2 py-1.5 text-center">
+                            <td className="px-2 py-1.5 text-center print:hidden">
                               <button
                                 type="button"
                                 onClick={() => removeLabour(r.id)}
@@ -725,7 +765,7 @@ function FacturesPage() {
                           </tr>
                         ))}
                         <tr
-                          className="cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                          className="cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors print:hidden"
                           onClick={addLabour}
                         >
                           <td colSpan={5} className="px-3 py-2 text-center text-xs text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400">
@@ -771,7 +811,7 @@ function FacturesPage() {
                           <th className="px-3 py-2 text-right" style={{ width: "12%" }}>
                             Sous-total
                           </th>
-                          <th className="px-3 py-2 text-center" style={{ width: "6%" }}></th>
+                          <th className="px-3 py-2 text-center print:hidden" style={{ width: "6%" }}></th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -860,7 +900,7 @@ function FacturesPage() {
                               <td className="px-3 py-1.5 text-right text-sm font-medium text-gray-900 dark:text-gray-100">
                                 {fmt(r.qty * rPrice)}
                               </td>
-                              <td className="px-2 py-1.5 text-center">
+                              <td className="px-2 py-1.5 text-center print:hidden">
                                 <button
                                   type="button"
                                   onClick={() => removePart(r.id)}
@@ -874,7 +914,7 @@ function FacturesPage() {
                           );
                         })}
                         <tr
-                          className="cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                          className="cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors print:hidden"
                           onClick={addPart}
                         >
                           <td colSpan={8} className="px-3 py-2 text-center text-xs text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400">
@@ -887,9 +927,9 @@ function FacturesPage() {
               </div>
 
               {/* ════════════ TOTAUX & OPTIONS ════════════ */}
-              <div className="grid grid-cols-2 gap-6">
-                {/* ── Left: discount, deposit, notes ── */}
-                <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-6 print:grid-cols-1">
+                {/* ── Left: discount, deposit, notes (ecran seulement) ── */}
+                <div className="space-y-4 print:hidden">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -940,7 +980,7 @@ function FacturesPage() {
                     />
                   </div>
 
-                  <div className="print:hidden">
+                  <div>
                     <label className="mb-1 block text-sm font-medium text-amber-700 dark:text-amber-400">
                       Notes internes (jamais imprime)
                     </label>
@@ -954,6 +994,14 @@ function FacturesPage() {
                     />
                   </div>
                 </div>
+
+                {/* ── Notes impression (texte simple) ── */}
+                {form.notes && (
+                  <div className="hidden print:block text-sm mt-2">
+                    <span className="font-semibold">Notes :</span>{" "}
+                    {form.notes}
+                  </div>
+                )}
 
                 {/* ── Right: totals box ── */}
                 <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4">
