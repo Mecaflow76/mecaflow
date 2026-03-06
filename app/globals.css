@@ -27,6 +27,11 @@ body {
 }
 
 /* ── Styles d'impression pour factures ── */
+@page {
+  size: letter portrait;
+  margin: 0.5in;
+}
+
 @media print {
   /* Cacher sidebar, backdrop modal, scrollbars */
   body {
