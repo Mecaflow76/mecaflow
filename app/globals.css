@@ -25,3 +25,78 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ── Styles d'impression pour factures ── */
+@media print {
+  /* Cacher sidebar, backdrop modal, scrollbars */
+  body {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Cacher la sidebar et le fond du modal */
+  nav,
+  aside,
+  .bg-black\/40 {
+    background: transparent !important;
+  }
+
+  /* Seul le contenu de la facture est visible */
+  .fixed.inset-0 {
+    position: static !important;
+    overflow: visible !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+
+  /* Le contenu de la facture remplit la page */
+  .fixed.inset-0 > div {
+    margin: 0 !important;
+    padding: 20px !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Forcer texte noir sur fond blanc pour les inputs */
+  input, select, textarea {
+    border: none !important;
+    background: transparent !important;
+    color: black !important;
+    padding: 2px !important;
+    box-shadow: none !important;
+  }
+
+  /* Cacher les éléments non-imprimables */
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Afficher les éléments print-only */
+  .hidden.print\:inline {
+    display: inline !important;
+  }
+
+  /* Forcer couleurs lisibles */
+  .dark .text-gray-100,
+  .dark .text-gray-300,
+  .dark .text-gray-400 {
+    color: #333 !important;
+  }
+
+  .text-red-600, .dark .text-red-400 {
+    color: #dc2626 !important;
+  }
+
+  /* Table borders visibles */
+  table {
+    border-collapse: collapse;
+  }
+  th, td {
+    border-bottom: 1px solid #e5e7eb !important;
+  }
+}

@@ -22,7 +22,7 @@ export default function Sidebar() {
   useEffect(() => setMounted(true), []);
 
   return (
-    <aside className="flex h-screen w-60 flex-col border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+    <aside className="flex h-screen w-60 flex-col border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 print:hidden">
       <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-5">
         <Link href="/" className="text-xl font-bold text-gray-900 dark:text-gray-100">
           MecaFlow

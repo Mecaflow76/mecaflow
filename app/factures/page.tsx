@@ -497,7 +497,14 @@ function FacturesPage() {
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
           <div className="my-8 w-full max-w-4xl rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl">
-            <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-gray-100">
+            {/* En-tête impression */}
+            <div className="hidden print:block mb-6 text-center border-b border-gray-300 pb-4">
+              <h1 className="text-2xl font-bold">Garage Lagarde</h1>
+              <p className="text-sm text-gray-600">2232 Rang Des Continuations, St-Jacques, QC J0K 2R0</p>
+              <p className="text-sm text-gray-600">(450) 750-6862 — garagedlagarde@gmail.com</p>
+              <p className="mt-2 text-lg font-semibold">FACTURE</p>
+            </div>
+            <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-gray-100 print:hidden">
               {editingFacture ? "Modifier la facture" : "Nouvelle facture"}
             </h2>
 
@@ -1024,25 +1031,34 @@ function FacturesPage() {
               </div>
 
               {/* ── Buttons ── */}
-              <div className="flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700 pt-4">
+              <div className="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-4 print:hidden">
                 <button
                   type="button"
-                  onClick={closeForm}
-                  className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  onClick={() => window.print()}
+                  className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
                 >
-                  Annuler
+                  🖨️ Imprimer
                 </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-                >
-                  {saving
-                    ? "Enregistrement..."
-                    : editingFacture
-                      ? "Enregistrer"
-                      : "Creer la facture"}
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={closeForm}
+                    className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    {saving
+                      ? "Enregistrement..."
+                      : editingFacture
+                        ? "Enregistrer"
+                        : "Creer la facture"}
+                  </button>
+                </div>
               </div>
             </form>
           </div>
