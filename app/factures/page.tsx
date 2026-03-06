@@ -9,6 +9,7 @@ interface Client {
   id: string;
   nom: string;
   prenom: string;
+  email?: string;
 }
 interface Vehicule {
   id: string;
@@ -109,6 +110,9 @@ function FacturesPage() {
   const [labourRows, setLabourRows] = useState<LabourRow[]>([]);
   const [partsRows, setPartsRows] = useState<PartRow[]>([]);
   const [saving, setSaving] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [emailConfirm, setEmailConfirm] = useState(false);
+  const [emailResult, setEmailResult] = useState<{ success?: boolean; error?: string } | null>(null);
 
   /* ── Auto-open form from URL params ── */
   const didAutoOpen = useRef(false);
@@ -142,7 +146,7 @@ function FacturesPage() {
     const { data, error } = await supabase
       .from("factures")
       .select(
-        "*, clients(id, nom, prenom), vehicules(id, marque, modele, plaque, vin, moteur, lieu_fabrication)"
+        "*, clients(id, nom, prenom, email), vehicules(id, marque, modele, plaque, vin, moteur, lieu_fabrication)"
       )
       .order("date_facture", { ascending: false });
     if (error) setError(error.message);
@@ -242,6 +246,38 @@ function FacturesPage() {
     setForm(emptyForm);
     setLabourRows([]);
     setPartsRows([]);
+    setEmailResult(null);
+  }
+
+  /* ── Envoi courriel ── */
+  async function handleSendEmail() {
+    if (!editingFacture) return;
+    setEmailConfirm(false);
+    setSendingEmail(true);
+    setEmailResult(null);
+    try {
+      const res = await fetch("/api/factures/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ factureId: editingFacture.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setEmailResult({ error: data.error || "Erreur lors de l'envoi." });
+      } else {
+        setEmailResult({ success: true });
+        fetchFactures();
+        if (data.statusUpdated && form.statut === "brouillon") {
+          setForm((prev) => ({ ...prev, statut: "envoyee" }));
+        }
+        // Auto-dismiss après 5 secondes
+        setTimeout(() => setEmailResult(null), 5000);
+      }
+    } catch {
+      setEmailResult({ error: "Erreur reseau. Reessayez." });
+    } finally {
+      setSendingEmail(false);
+    }
   }
 
   /* ── Labour rows ── */
@@ -500,7 +536,7 @@ function FacturesPage() {
             <div className="hidden print:block mb-6 text-center border-b border-gray-300 pb-4">
               <h1 className="text-2xl font-bold">Garage Lagarde</h1>
               <p className="text-sm text-gray-600">2232 Rang Des Continuations, St-Jacques, QC J0K 2R0</p>
-              <p className="text-sm text-gray-600">(450) 750-6862 — garagedlagarde@gmail.com</p>
+              <p className="text-sm text-gray-600">(450) 750-6862 — garagelagarde@outlook.com</p>
               <p className="mt-2 text-lg font-semibold">FACTURE</p>
             </div>
             <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-gray-100 print:hidden">
@@ -1077,15 +1113,57 @@ function FacturesPage() {
                 </div>
               </div>
 
+              {/* ── Feedback toast courriel ── */}
+              {emailResult && (
+                <div
+                  className={`mb-4 rounded-lg p-3 text-sm print:hidden ${
+                    emailResult.success
+                      ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"
+                      : "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800"
+                  }`}
+                >
+                  {emailResult.success
+                    ? "✅ Facture envoyee par courriel avec succes!"
+                    : `❌ ${emailResult.error}`}
+                </div>
+              )}
+
               {/* ── Buttons ── */}
               <div className="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-4 print:hidden">
-                <button
-                  type="button"
-                  onClick={() => window.print()}
-                  className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
-                >
-                  🖨️ Imprimer
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => window.print()}
+                    className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
+                  >
+                    🖨️ Imprimer
+                  </button>
+                  {editingFacture && (
+                    <button
+                      type="button"
+                      disabled={sendingEmail || form.statut === "annulee"}
+                      onClick={() => {
+                        const c = clients.find((cl) => cl.id === form.client_id);
+                        if (!c?.email) {
+                          setEmailResult({ error: "Ce client n'a pas d'adresse courriel. Ajoutez-la dans la fiche client." });
+                          setTimeout(() => setEmailResult(null), 5000);
+                          return;
+                        }
+                        setEmailConfirm(true);
+                      }}
+                      className="rounded-lg border border-blue-300 dark:border-blue-600 px-4 py-2 text-sm font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {sendingEmail ? (
+                        <>
+                          <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                          Envoi...
+                        </>
+                      ) : (
+                        <>✉️ Envoyer par courriel</>
+                      )}
+                    </button>
+                  )}
+                </div>
                 <div className="flex gap-3">
                   <button
                     type="button"
@@ -1108,6 +1186,42 @@ function FacturesPage() {
                 </div>
               </div>
             </form>
+
+            {/* ── Dialogue de confirmation courriel ── */}
+            {emailConfirm && (
+              <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
+                <div className="w-full max-w-sm rounded-xl bg-white dark:bg-gray-800 p-6 shadow-2xl border border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                    Confirmer l&apos;envoi
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Envoyer cette facture de <span className="font-semibold text-gray-900 dark:text-gray-100">{fmt(totals.total)}</span> a :
+                  </p>
+                  <p className="text-base font-medium text-blue-600 dark:text-blue-400 mb-4">
+                    {(() => {
+                      const c = clients.find((cl) => cl.id === form.client_id);
+                      return c ? `${c.prenom} ${c.nom} — ${c.email}` : "";
+                    })()}
+                  </p>
+                  <div className="flex justify-end gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setEmailConfirm(false)}
+                      className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSendEmail}
+                      className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 flex items-center gap-2"
+                    >
+                      ✉️ Envoyer
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
