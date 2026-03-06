@@ -17,6 +17,8 @@ interface Vehicule {
   annee: number | null;
   plaque: string;
   vin: string;
+  moteur: string;
+  lieu_fabrication: string;
   kilometrage: number | null;
   couleur: string;
   clients?: Client;
@@ -41,6 +43,8 @@ const emptyForm = {
   annee: "",
   plaque: "",
   vin: "",
+  moteur: "",
+  lieu_fabrication: "",
   kilometrage: "",
   couleur: "",
 };
@@ -55,8 +59,49 @@ export default function VehiculesPage() {
   const [editingVehicule, setEditingVehicule] = useState<Vehicule | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [decoding, setDecoding] = useState(false);
+  const [vinInfo, setVinInfo] = useState<{ moteur: string; usine: string } | null>(null);
   const [bons, setBons] = useState<BonTravail[]>([]);
   const [expandedVehiculeId, setExpandedVehiculeId] = useState<string | null>(null);
+
+  async function decodeVin() {
+    if (form.vin.length !== 17) {
+      setError("Le VIN doit contenir 17 caracteres pour etre decode.");
+      return;
+    }
+    setDecoding(true);
+    setError(null);
+    try {
+      const res = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${form.vin}?format=json`);
+      const data = await res.json();
+      const results = data.Results || [];
+      const get = (id: number) => {
+        const r = results.find((r: { VariableId: number }) => r.VariableId === id);
+        return r?.Value && r.Value.trim() ? r.Value.trim() : "";
+      };
+      const marque = get(26);  // Make
+      const modele = get(28);  // Model
+      const annee = get(29);   // Model Year
+      const moteur = [get(13), get(71)].filter(Boolean).join(" ");  // Displacement + Engine Model
+      const usine = get(75) || get(76);  // Plant City, Plant Country
+
+      setForm((prev) => ({
+        ...prev,
+        marque: marque || prev.marque,
+        modele: modele || prev.modele,
+        annee: annee || prev.annee,
+        moteur: moteur || prev.moteur,
+        lieu_fabrication: usine || prev.lieu_fabrication,
+      }));
+      setVinInfo({
+        moteur: moteur || "Non disponible",
+        usine: usine || "Non disponible",
+      });
+    } catch {
+      setError("Erreur lors du decodage du VIN. Verifiez votre connexion internet.");
+    }
+    setDecoding(false);
+  }
 
   useEffect(() => {
     fetchVehicules();
@@ -121,6 +166,7 @@ export default function VehiculesPage() {
   function openNew() {
     setEditingVehicule(null);
     setForm(emptyForm);
+    setVinInfo(null);
     setShowForm(true);
   }
 
@@ -133,9 +179,12 @@ export default function VehiculesPage() {
       annee: v.annee?.toString() || "",
       plaque: v.plaque || "",
       vin: v.vin || "",
+      moteur: v.moteur || "",
+      lieu_fabrication: v.lieu_fabrication || "",
       kilometrage: v.kilometrage?.toString() || "",
       couleur: v.couleur || "",
     });
+    setVinInfo(null);
     setShowForm(true);
   }
 
@@ -143,6 +192,7 @@ export default function VehiculesPage() {
     setShowForm(false);
     setEditingVehicule(null);
     setForm(emptyForm);
+    setVinInfo(null);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -160,6 +210,8 @@ export default function VehiculesPage() {
       annee: form.annee ? parseInt(form.annee) : null,
       plaque: form.plaque,
       vin: form.vin,
+      moteur: form.moteur,
+      lieu_fabrication: form.lieu_fabrication,
       kilometrage: form.kilometrage ? parseInt(form.kilometrage) : null,
       couleur: form.couleur,
     };
@@ -479,11 +531,11 @@ export default function VehiculesPage() {
                 </div>
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700">
-                    Moteur
+                    Couleur
                   </label>
                   <input
                     type="text"
-                    placeholder="V6 3.5L, 4 cyl 2.0T..."
+                    placeholder="Ex: Noir, Blanc..."
                     value={form.couleur}
                     onChange={(e) =>
                       setForm({ ...form, couleur: e.target.value })
@@ -497,21 +549,61 @@ export default function VehiculesPage() {
                 <label className="mb-1 block text-sm font-medium text-gray-700">
                   VIN (NIV)
                 </label>
-                <input
-                  type="text"
-                  maxLength={17}
-                  placeholder="17 caracteres"
-                  value={form.vin}
-                  onChange={(e) =>
-                    setForm({ ...form, vin: e.target.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, "").slice(0, 17) })
-                  }
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 font-mono tracking-wider focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    maxLength={17}
+                    placeholder="17 caracteres"
+                    value={form.vin}
+                    onChange={(e) => {
+                      setForm({ ...form, vin: e.target.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, "").slice(0, 17) });
+                      setVinInfo(null);
+                    }}
+                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 font-mono tracking-wider focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={decodeVin}
+                    disabled={form.vin.length !== 17 || decoding}
+                    className="rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+                  >
+                    {decoding ? "..." : "Decoder"}
+                  </button>
+                </div>
                 {form.vin.length > 0 && form.vin.length < 17 && (
                   <p className="mt-1 text-xs text-red-500">
                     Le VIN doit contenir exactement 17 caracteres ({form.vin.length}/17)
                   </p>
                 )}
+                {vinInfo && (
+                  <p className="mt-1 text-xs font-semibold text-green-600">VIN decode avec succes !</p>
+                )}
+                <div className="grid grid-cols-2 gap-4 mt-3">
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-gray-700">
+                      Moteur
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ex: 5.3L V8, 2.0L Turbo..."
+                      value={form.moteur}
+                      onChange={(e) => setForm({ ...form, moteur: e.target.value })}
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-gray-700">
+                      Lieu de fabrication
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ex: Oshawa, Ontario..."
+                      value={form.lieu_fabrication}
+                      onChange={(e) => setForm({ ...form, lieu_fabrication: e.target.value })}
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="flex justify-end gap-3 pt-2">

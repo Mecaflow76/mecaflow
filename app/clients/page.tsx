@@ -37,6 +37,13 @@ const emptyForm = {
   code_postal: "",
 };
 
+function formatTelephone(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)})${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)})${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 export default function ClientsPage() {
   const router = useRouter();
   const [clients, setClients] = useState<Client[]>([]);
@@ -318,9 +325,10 @@ export default function ClientsPage() {
                   </label>
                   <input
                     type="tel"
+                    placeholder="(450)750-6862"
                     value={form.telephone}
                     onChange={(e) =>
-                      setForm({ ...form, telephone: e.target.value })
+                      setForm({ ...form, telephone: formatTelephone(e.target.value) })
                     }
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
