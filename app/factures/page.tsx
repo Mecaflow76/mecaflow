@@ -170,26 +170,33 @@ function FacturesPage() {
   const calcTotals = useCallback(() => {
     const labourTotal = labourRows.reduce((s, r) => s + r.qty * r.rate, 0);
     const partsTotal = partsRows.reduce((s, r) => s + r.qty * (parseFloat(String(r.price)) || 0), 0);
+    const partsCost = partsRows.reduce((s, r) => s + (parseFloat(String(r.cost)) || 0) * r.qty, 0);
     const sub = labourTotal + partsTotal;
     const discPct = parseFloat(form.discount_pct) || 0;
-    const disc = partsTotal * (discPct / 100);
+    // Rabais sur la marge (profit) seulement, pas sur le prix total
+    const margeAmount = partsTotal - partsCost;
+    const disc = margeAmount > 0 ? margeAmount * (discPct / 100) : partsTotal * (discPct / 100);
     const dep = parseFloat(form.deposit) || 0;
     const taxable = Math.max(0, sub - disc);
     const tps = taxable * 0.05;
     const tvq = taxable * 0.09975;
     const total = taxable + tps + tvq;
     const due = Math.max(0, total - dep);
-    return { labourTotal, partsTotal, sub, disc, discPct, taxable, tps, tvq, total, dep, due };
+    return { labourTotal, partsTotal, partsCost, sub, disc, discPct, taxable, tps, tvq, total, dep, due };
   }, [labourRows, partsRows, form.discount_pct, form.deposit]);
 
   const totals = calcTotals();
 
-  /* ── Internal margin (parts) ── */
-  const totalCost = partsRows.reduce((s, r) => s + (parseFloat(String(r.cost)) || 0) * r.qty, 0);
-  const totalSell = partsRows.reduce((s, r) => s + (parseFloat(String(r.price)) || 0) * r.qty, 0);
-  const margeGlobale =
+  /* ── Internal margin (parts) — after discount ── */
+  const totalCost = totals.partsCost;
+  const totalSell = totals.partsTotal;
+  const margeAvantRabais =
     totalSell > 0 && totalCost > 0
       ? Math.round(((totalSell - totalCost) / totalCost) * 100)
+      : null;
+  const margeApresRabais =
+    totalSell > 0 && totalCost > 0 && totals.disc > 0
+      ? Math.round(((totalSell - totals.disc - totalCost) / totalCost) * 100)
       : null;
 
   /* ── Filtered vehicles by selected client ── */
@@ -879,7 +886,7 @@ function FacturesPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Rabais sur pieces (%)
+                        Rabais sur marge (%)
                       </label>
                       <input
                         type="number"
@@ -952,13 +959,23 @@ function FacturesPage() {
                       <span className="text-gray-600 dark:text-gray-400">Pieces</span>
                       <span className="font-medium">{fmt(totals.partsTotal)}</span>
                     </div>
-                    {margeGlobale !== null && (
+                    {margeAvantRabais !== null && (
                       <div className="flex justify-between text-xs">
                         <span className="text-amber-600">
-                          Marge globale pieces
+                          Marge pieces{margeApresRabais !== null ? " (avant rabais)" : ""}
                         </span>
                         <span className="font-medium text-amber-600">
-                          {margeGlobale}%
+                          {margeAvantRabais}%
+                        </span>
+                      </div>
+                    )}
+                    {margeApresRabais !== null && (
+                      <div className="flex justify-between text-xs">
+                        <span className="text-red-500 dark:text-red-400">
+                          Marge après rabais
+                        </span>
+                        <span className="font-medium text-red-500 dark:text-red-400">
+                          {margeApresRabais}%
                         </span>
                       </div>
                     )}
@@ -970,7 +987,7 @@ function FacturesPage() {
                     {totals.disc > 0 && (
                       <div className="flex justify-between text-red-600 dark:text-red-400">
                         <span>
-                          Rabais ({totals.discPct}% pieces)
+                          Rabais ({totals.discPct}% marge)
                         </span>
                         <span>-{fmt(totals.disc)}</span>
                       </div>
