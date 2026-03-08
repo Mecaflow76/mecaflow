@@ -72,21 +72,12 @@ export default function ClientsPage() {
   // Modal vehicule picker
   const [pickedClient, setPickedClient] = useState<Client | null>(null);
 
-  useEffect(() => {
-    fetchClients();
-    fetchVehicules();
-  }, []);
-
   async function fetchVehicules() {
     const { data } = await supabase
       .from("vehicules")
       .select("*")
       .order("marque", { ascending: true });
     setVehicules(data || []);
-  }
-
-  function getClientVehicules(clientId: string) {
-    return vehicules.filter((v) => v.client_id === clientId);
   }
 
   async function fetchClients() {
@@ -102,6 +93,15 @@ export default function ClientsPage() {
       setClients(data || []);
     }
     setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchClients();
+    fetchVehicules();
+  }, []);
+
+  function getClientVehicules(clientId: string) {
+    return vehicules.filter((v) => v.client_id === clientId);
   }
 
   function openNew() {

@@ -127,19 +127,8 @@ function BonsTravailPage() {
     }
   }, [searchParams]);
 
-  /* ── Auto-open bon for editing from edit_id param ── */
+  /* ── Auto-open ref ── */
   const didAutoEdit = useRef(false);
-  useEffect(() => {
-    if (didAutoEdit.current || loading) return;
-    const editId = searchParams.get("edit_id");
-    if (editId && bons.length > 0) {
-      const bon = bons.find((b) => b.id === editId);
-      if (bon) {
-        didAutoEdit.current = true;
-        openEdit(bon);
-      }
-    }
-  }, [searchParams, bons, loading]);
 
   /* ── Chrono state ── */
   const [chronoState, setChronoState] = useState<ChronoState>("idle");
@@ -271,12 +260,6 @@ function BonsTravailPage() {
   }
 
   /* ── Fetch ── */
-  useEffect(() => {
-    fetchBons();
-    fetchClients();
-    fetchVehicules();
-  }, []);
-
   async function fetchBons() {
     setLoading(true);
     const { data, error } = await supabase
@@ -318,7 +301,7 @@ function BonsTravailPage() {
     setShowForm(true);
   }
 
-  function openEdit(bon: BonTravail) {
+  const openEdit = useCallback((bon: BonTravail) => {
     setEditingBon(bon);
     setForm({
       client_id: bon.client_id || "",
@@ -349,7 +332,20 @@ function BonsTravailPage() {
     }
 
     setShowForm(true);
-  }
+  }, []);
+
+  /* ── Auto-open bon for editing from edit_id param ── */
+  useEffect(() => {
+    if (didAutoEdit.current || loading) return;
+    const editId = searchParams.get("edit_id");
+    if (editId && bons.length > 0) {
+      const bon = bons.find((b) => b.id === editId);
+      if (bon) {
+        didAutoEdit.current = true;
+        openEdit(bon);
+      }
+    }
+  }, [searchParams, bons, loading, openEdit]);
 
   function closeForm() {
     chronoResetSilent();
@@ -360,6 +356,12 @@ function BonsTravailPage() {
     setEditingBon(null);
     setForm(emptyForm);
   }
+
+  useEffect(() => {
+    fetchBons();
+    fetchClients();
+    fetchVehicules();
+  }, []);
 
   /* ── Submit ── */
   async function handleSubmit(e: React.FormEvent) {

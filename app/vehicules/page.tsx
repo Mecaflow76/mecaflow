@@ -103,12 +103,6 @@ export default function VehiculesPage() {
     setDecoding(false);
   }
 
-  useEffect(() => {
-    fetchVehicules();
-    fetchClients();
-    fetchBons();
-  }, []);
-
   async function fetchBons() {
     const { data } = await supabase
       .from("bons_travail")
@@ -116,29 +110,6 @@ export default function VehiculesPage() {
       .order("date_creation", { ascending: false });
     setBons(data || []);
   }
-
-  function getVehiculeBons(vehiculeId: string) {
-    return bons.filter((b) => b.vehicule_id === vehiculeId);
-  }
-
-  function toggleExpand(vehiculeId: string) {
-    setExpandedVehiculeId((prev) => (prev === vehiculeId ? null : vehiculeId));
-  }
-
-  function formatChrono(ms: number | null): string {
-    if (!ms) return "";
-    const totalSec = Math.floor(ms / 1000);
-    const h = Math.floor(totalSec / 3600);
-    const m = Math.floor((totalSec % 3600) / 60);
-    return `${h}h${String(m).padStart(2, "0")}`;
-  }
-
-  const statutLabels: Record<string, { label: string; color: string }> = {
-    en_cours: { label: "En cours", color: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" },
-    termine: { label: "Termine", color: "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400" },
-    en_attente: { label: "En attente", color: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400" },
-    annule: { label: "Annule", color: "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400" },
-  };
 
   async function fetchVehicules() {
     setLoading(true);
@@ -162,6 +133,35 @@ export default function VehiculesPage() {
       .order("nom", { ascending: true });
     setClients(data || []);
   }
+
+  useEffect(() => {
+    fetchVehicules();
+    fetchClients();
+    fetchBons();
+  }, []);
+
+  function getVehiculeBons(vehiculeId: string) {
+    return bons.filter((b) => b.vehicule_id === vehiculeId);
+  }
+
+  function toggleExpand(vehiculeId: string) {
+    setExpandedVehiculeId((prev) => (prev === vehiculeId ? null : vehiculeId));
+  }
+
+  function formatChrono(ms: number | null): string {
+    if (!ms) return "";
+    const totalSec = Math.floor(ms / 1000);
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    return `${h}h${String(m).padStart(2, "0")}`;
+  }
+
+  const statutLabels: Record<string, { label: string; color: string }> = {
+    en_cours: { label: "En cours", color: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" },
+    termine: { label: "Termine", color: "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400" },
+    en_attente: { label: "En attente", color: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400" },
+    annule: { label: "Annule", color: "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400" },
+  };
 
   function openNew() {
     setEditingVehicule(null);

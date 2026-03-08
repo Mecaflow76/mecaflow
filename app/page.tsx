@@ -20,10 +20,6 @@ export default function DashboardPage() {
   });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
   async function fetchStats() {
     const today = new Date().toISOString().split("T")[0];
 
@@ -48,6 +44,10 @@ export default function DashboardPage() {
     });
     setLoading(false);
   }
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
   const cards = [
     {
