@@ -331,30 +331,6 @@ export default function RapportsPage() {
             </h2>
           </div>
 
-          {/* ── Cartes résumé ── */}
-          <div className="mb-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="rounded-lg border border-blue-200/50 dark:border-blue-700/30 bg-white/80 dark:bg-gray-800/80 p-3 text-center">
-              <p className="text-lg font-bold text-green-600 dark:text-green-400">{statutStats.payee.count}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">Payees</p>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">{fmt(statutStats.payee.total)}</p>
-            </div>
-            <div className="rounded-lg border border-blue-200/50 dark:border-blue-700/30 bg-white/80 dark:bg-gray-800/80 p-3 text-center">
-              <p className="text-lg font-bold text-yellow-600 dark:text-yellow-400">{statutStats.envoyee.count}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">Envoyees</p>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">{fmt(statutStats.envoyee.total)}</p>
-            </div>
-            <div className="rounded-lg border border-blue-200/50 dark:border-blue-700/30 bg-white/80 dark:bg-gray-800/80 p-3 text-center">
-              <p className="text-lg font-bold text-gray-600 dark:text-gray-400">{statutStats.brouillon.count}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">Brouillons</p>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">{fmt(statutStats.brouillon.total)}</p>
-            </div>
-            <div className="rounded-lg border border-blue-200/50 dark:border-blue-700/30 bg-white/80 dark:bg-gray-800/80 p-3 text-center">
-              <p className="text-lg font-bold text-red-600 dark:text-red-400">{statutStats.en_retard.count}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">En retard</p>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">{fmt(statutStats.en_retard.total)}</p>
-            </div>
-          </div>
-
           {/* ── Tableau détaillé ── */}
           <div className="overflow-hidden rounded-lg border border-blue-200/50 dark:border-blue-700/30">
             <table className="w-full text-xs">
