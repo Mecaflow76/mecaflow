@@ -61,83 +61,7 @@ function getYearRange(): [string, string] {
   return [`${y}-01-01`, `${y}-12-31`];
 }
 
-function getPrevPeriodRange(
-  period: Period,
-  from: string,
-  to: string
-): [string, string] {
-  if (period === "semaine") {
-    const f = new Date(from);
-    f.setDate(f.getDate() - 7);
-    const t = new Date(to);
-    t.setDate(t.getDate() - 7);
-    return [f.toISOString().slice(0, 10), t.toISOString().slice(0, 10)];
-  }
-  if (period === "mois") {
-    const f = new Date(from);
-    f.setMonth(f.getMonth() - 1);
-    const t = new Date(to);
-    t.setMonth(t.getMonth() - 1);
-    return [f.toISOString().slice(0, 10), t.toISOString().slice(0, 10)];
-  }
-  if (period === "annee") {
-    const f = new Date(from);
-    f.setFullYear(f.getFullYear() - 1);
-    const t = new Date(to);
-    t.setFullYear(t.getFullYear() - 1);
-    return [f.toISOString().slice(0, 10), t.toISOString().slice(0, 10)];
-  }
-  // custom: même durée, décalée avant
-  const fd = new Date(from);
-  const td = new Date(to);
-  const dur = td.getTime() - fd.getTime();
-  const prevEnd = new Date(fd.getTime() - 86400000);
-  const prevStart = new Date(prevEnd.getTime() - dur);
-  return [prevStart.toISOString().slice(0, 10), prevEnd.toISOString().slice(0, 10)];
-}
-
 type Period = "semaine" | "mois" | "annee" | "custom";
-
-/* ───── Icon Components ───── */
-function IconDollar() {
-  return (
-    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M12 3v3m0 12v3" />
-    </svg>
-  );
-}
-
-function IconReceipt() {
-  return (
-    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-    </svg>
-  );
-}
-
-function IconDocuments() {
-  return (
-    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-    </svg>
-  );
-}
-
-function IconClock() {
-  return (
-    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  );
-}
-
-function IconWrench() {
-  return (
-    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75a4.5 4.5 0 01-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 11-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 016.336-4.486l-3.276 3.276a3.004 3.004 0 002.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852z" />
-    </svg>
-  );
-}
 
 /* ═══════════════════════ Component ═══════════════════════ */
 export default function RapportsPage() {
@@ -181,19 +105,6 @@ export default function RapportsPage() {
     );
   }, [factures, dateFrom, dateTo]);
 
-  /* ── Période précédente ── */
-  const [prevFrom, prevTo] = useMemo(() => {
-    if (!dateFrom || !dateTo) return ["", ""];
-    return getPrevPeriodRange(period, dateFrom, dateTo);
-  }, [period, dateFrom, dateTo]);
-
-  const prevFiltered = useMemo(() => {
-    if (!prevFrom || !prevTo) return [];
-    return factures.filter(
-      (f) => f.date_facture >= prevFrom && f.date_facture <= prevTo
-    );
-  }, [factures, prevFrom, prevTo]);
-
   /* ── Stats courantes ── */
   const stats = useMemo(() => {
     const payees = filtered.filter((f) => f.statut === "payee");
@@ -218,31 +129,6 @@ export default function RapportsPage() {
       totalMO,
     };
   }, [filtered]);
-
-  /* ── Stats période précédente ── */
-  const prevStats = useMemo(() => {
-    const payees = prevFiltered.filter((f) => f.statut === "payee");
-    const nonPayees = prevFiltered.filter(
-      (f) => f.statut !== "payee" && f.statut !== "annulee"
-    );
-    const revenus = payees.reduce((s, f) => s + (f.montant_total || 0), 0);
-    const totalFacture = prevFiltered.reduce(
-      (s, f) => s + (f.montant_total || 0),
-      0
-    );
-    const totalMO = prevFiltered.reduce((s, f) => {
-      const rows = f.labour_rows || [];
-      return s + rows.reduce((ss, r) => ss + (r.qty || 0) * (r.rate || 0), 0);
-    }, 0);
-
-    return {
-      revenus,
-      totalFacture,
-      nbFactures: prevFiltered.length,
-      nbEnAttente: nonPayees.length,
-      totalMO,
-    };
-  }, [prevFiltered]);
 
   /* ── Statut des factures ── */
   const statutStats = useMemo(() => {
@@ -367,92 +253,6 @@ export default function RapportsPage() {
       .slice(0, 5);
   }, [filtered]);
 
-  /* ── Indicateur santé ── */
-  const health = useMemo(() => {
-    if (stats.nbFactures === 0) return null;
-    const pctPaid =
-      stats.nbFactures > 0
-        ? (statutStats.payee.count / stats.nbFactures) * 100
-        : 100;
-    const hasOverdue = statutStats.en_retard.count > 0;
-    const margin = piecesStats.marge;
-
-    let level: "good" | "warning" | "bad" = "good";
-    let message = "Bonne periode";
-
-    if (hasOverdue) {
-      level = "bad";
-      message = `${statutStats.en_retard.count} facture${statutStats.en_retard.count > 1 ? "s" : ""} en retard`;
-    } else if (pctPaid < 50 || (margin !== null && margin < 15)) {
-      level = "bad";
-      message = "Periode difficile";
-    } else if (pctPaid < 70 || (margin !== null && margin < 30)) {
-      level = "warning";
-      message = "Periode correcte";
-    }
-
-    return { level, message, pctPaid, hasOverdue };
-  }, [stats, statutStats, piecesStats]);
-
-  /* ── KPI config ── */
-  const kpis = [
-    {
-      icon: <IconDollar />,
-      iconBg: "bg-green-100 dark:bg-green-900/30",
-      iconColor: "text-green-600 dark:text-green-400",
-      valueColor: "text-green-600 dark:text-green-400",
-      label: "Revenus encaisses",
-      value: fmt(stats.revenus),
-      current: stats.revenus,
-      prev: prevStats.revenus,
-      invert: false,
-    },
-    {
-      icon: <IconReceipt />,
-      iconBg: "bg-gray-100 dark:bg-gray-700",
-      iconColor: "text-gray-500 dark:text-gray-400",
-      valueColor: "text-gray-900 dark:text-gray-100",
-      label: "Total facture",
-      value: fmt(stats.totalFacture),
-      current: stats.totalFacture,
-      prev: prevStats.totalFacture,
-      invert: false,
-    },
-    {
-      icon: <IconDocuments />,
-      iconBg: "bg-blue-100 dark:bg-blue-900/30",
-      iconColor: "text-blue-600 dark:text-blue-400",
-      valueColor: "text-blue-600 dark:text-blue-400",
-      label: "Factures",
-      value: stats.nbFactures.toString(),
-      current: stats.nbFactures,
-      prev: prevStats.nbFactures,
-      invert: false,
-    },
-    {
-      icon: <IconClock />,
-      iconBg: "bg-amber-100 dark:bg-amber-900/30",
-      iconColor: "text-amber-600 dark:text-amber-400",
-      valueColor: "text-amber-600 dark:text-amber-400",
-      label: "En attente",
-      value: stats.nbEnAttente.toString(),
-      current: stats.nbEnAttente,
-      prev: prevStats.nbEnAttente,
-      invert: true,
-    },
-    {
-      icon: <IconWrench />,
-      iconBg: "bg-purple-100 dark:bg-purple-900/30",
-      iconColor: "text-purple-600 dark:text-purple-400",
-      valueColor: "text-purple-600 dark:text-purple-400",
-      label: "Main d'oeuvre",
-      value: fmt(stats.totalMO),
-      current: stats.totalMO,
-      prev: prevStats.totalMO,
-      invert: false,
-    },
-  ];
-
   /* ── Période labels ── */
   const periodLabel =
     period === "semaine"
@@ -520,67 +320,6 @@ export default function RapportsPage() {
               />
             </div>
           )}
-        </div>
-
-        {/* ════════════ BANDEAU SANTÉ ════════════ */}
-        {health && (
-          <div
-            className={`mb-6 rounded-xl border px-5 py-3.5 flex items-center gap-3 ${
-              health.level === "good"
-                ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-                : health.level === "warning"
-                  ? "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800"
-                  : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
-            }`}
-          >
-            <span className="text-xl">
-              {health.level === "good" ? "✅" : health.level === "warning" ? "⚠️" : "🔴"}
-            </span>
-            <div>
-              <span
-                className={`font-semibold ${
-                  health.level === "good"
-                    ? "text-green-700 dark:text-green-400"
-                    : health.level === "warning"
-                      ? "text-amber-700 dark:text-amber-400"
-                      : "text-red-700 dark:text-red-400"
-                }`}
-              >
-                {health.message}
-              </span>
-              <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
-                — {Math.round(health.pctPaid)}% payees
-                {piecesStats.marge !== null && `, marge pieces ${piecesStats.marge.toFixed(0)}%`}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* ════════════ KPI CARDS ════════════ */}
-        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-5">
-          {kpis.map((kpi) => (
-            <div
-              key={kpi.label}
-              className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-lg ${kpi.iconBg}`}
-                >
-                  <span className={kpi.iconColor}>{kpi.icon}</span>
-                </div>
-                <TrendBadge
-                  current={kpi.current}
-                  previous={kpi.prev}
-                  invert={kpi.invert}
-                />
-              </div>
-              <p className={`text-xl font-bold ${kpi.valueColor}`}>{kpi.value}</p>
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 uppercase">
-                {kpi.label}
-              </p>
-            </div>
-          ))}
         </div>
 
         {/* ════════════ STATUT DES FACTURES ════════════ */}
@@ -980,39 +719,6 @@ export default function RapportsPage() {
 }
 
 /* ═══════════════════════ Sub-components ═══════════════════════ */
-
-function TrendBadge({
-  current,
-  previous,
-  invert,
-}: {
-  current: number;
-  previous: number;
-  invert?: boolean;
-}) {
-  if (previous === 0 && current === 0) return null;
-  if (previous === 0 && current > 0)
-    return (
-      <span className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900/30 px-2 py-0.5 text-xs font-medium text-blue-600 dark:text-blue-400">
-        nouveau
-      </span>
-    );
-  const pct = ((current - previous) / Math.abs(previous)) * 100;
-  if (Math.abs(pct) < 1) return null;
-  const isUp = pct > 0;
-  const isGood = invert ? !isUp : isUp;
-  return (
-    <span
-      className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium ${
-        isGood
-          ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
-          : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
-      }`}
-    >
-      {isUp ? "↑" : "↓"} {Math.abs(pct).toFixed(0)}%
-    </span>
-  );
-}
 
 function StatusCard({
   label,
