@@ -224,10 +224,6 @@ export default function AgendaPage() {
     dragMoved.current = false;
   }
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
-
   async function fetchAll() {
     setLoading(true);
     const [bRes, rRes, cRes, vRes] = await Promise.all([
@@ -248,6 +244,10 @@ export default function AgendaPage() {
     setVehicules(vRes.data || []);
     setLoading(false);
   }
+
+  useEffect(() => {
+    fetchAll();
+  }, []);
 
   /* ── Navigation ── */
   const visibleDays = useMemo(() => {

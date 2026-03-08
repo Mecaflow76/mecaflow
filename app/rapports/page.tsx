@@ -72,10 +72,6 @@ export default function RapportsPage() {
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
-
   async function fetchAll() {
     setLoading(true);
     const [fRes, cRes] = await Promise.all([
@@ -89,6 +85,10 @@ export default function RapportsPage() {
     setClients(cRes.data || []);
     setLoading(false);
   }
+
+  useEffect(() => {
+    fetchAll();
+  }, []);
 
   /* ── Période courante ── */
   const [dateFrom, dateTo] = useMemo(() => {
@@ -349,7 +349,6 @@ export default function RapportsPage() {
                   { label: "Brouillons", data: statutStats.brouillon, color: "text-gray-600 dark:text-gray-400" },
                   { label: "En retard", data: statutStats.en_retard, color: "text-red-600 dark:text-red-400" },
                 ].map((row) => {
-                  const pct = stats.nbFactures > 0 ? (row.data.count / stats.nbFactures) * 100 : 0;
                   const totalMontant = statutStats.payee.total + statutStats.envoyee.total + statutStats.brouillon.total + statutStats.en_retard.total;
                   const pctMontant = totalMontant > 0 ? (row.data.total / totalMontant) * 100 : 0;
                   return (
@@ -694,40 +693,3 @@ export default function RapportsPage() {
   );
 }
 
-/* ═══════════════════════ Sub-components ═══════════════════════ */
-
-function StatusCard({
-  label,
-  count,
-  total,
-  pct,
-  bgColor,
-  borderColor,
-  textColor,
-  barColor,
-}: {
-  label: string;
-  count: number;
-  total: number;
-  pct: number;
-  bgColor: string;
-  borderColor: string;
-  textColor: string;
-  barColor: string;
-}) {
-  return (
-    <div className={`rounded-xl border ${borderColor} ${bgColor} p-4`}>
-      <p className={`text-2xl font-bold ${textColor}`}>{count}</p>
-      <p className={`text-xs font-medium ${textColor} mt-1`}>{label}</p>
-      <p className="mt-2 text-sm font-medium text-gray-700 dark:text-gray-300">{fmt(total)}</p>
-      {/* Barre de progression */}
-      <div className="mt-3 h-1.5 w-full rounded-full bg-white/60 dark:bg-gray-700">
-        <div
-          className={`h-1.5 rounded-full ${barColor} transition-all duration-500`}
-          style={{ width: `${Math.min(pct, 100)}%` }}
-        />
-      </div>
-      <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">{pct.toFixed(0)}% du total</p>
-    </div>
-  );
-}
