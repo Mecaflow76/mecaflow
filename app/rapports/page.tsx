@@ -584,51 +584,98 @@ export default function RapportsPage() {
         </div>
 
         {/* ════════════ STATUT DES FACTURES ════════════ */}
-        <div className="mb-8">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-            Statut des factures
-          </h2>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            <StatusCard
-              label="Payees"
-              count={statutStats.payee.count}
-              total={statutStats.payee.total}
-              pct={stats.nbFactures > 0 ? (statutStats.payee.count / stats.nbFactures) * 100 : 0}
-              bgColor="bg-green-50 dark:bg-green-900/20"
-              borderColor="border-green-200 dark:border-green-800"
-              textColor="text-green-700 dark:text-green-400"
-              barColor="bg-green-500"
-            />
-            <StatusCard
-              label="Envoyees"
-              count={statutStats.envoyee.count}
-              total={statutStats.envoyee.total}
-              pct={stats.nbFactures > 0 ? (statutStats.envoyee.count / stats.nbFactures) * 100 : 0}
-              bgColor="bg-yellow-50 dark:bg-yellow-900/20"
-              borderColor="border-yellow-200 dark:border-yellow-800"
-              textColor="text-yellow-700 dark:text-yellow-400"
-              barColor="bg-yellow-500"
-            />
-            <StatusCard
-              label="Brouillons"
-              count={statutStats.brouillon.count}
-              total={statutStats.brouillon.total}
-              pct={stats.nbFactures > 0 ? (statutStats.brouillon.count / stats.nbFactures) * 100 : 0}
-              bgColor="bg-gray-50 dark:bg-gray-800"
-              borderColor="border-gray-200 dark:border-gray-700"
-              textColor="text-gray-600 dark:text-gray-400"
-              barColor="bg-gray-400"
-            />
-            <StatusCard
-              label="En retard"
-              count={statutStats.en_retard.count}
-              total={statutStats.en_retard.total}
-              pct={stats.nbFactures > 0 ? (statutStats.en_retard.count / stats.nbFactures) * 100 : 0}
-              bgColor="bg-red-50 dark:bg-red-900/20"
-              borderColor="border-red-200 dark:border-red-800"
-              textColor="text-red-700 dark:text-red-400"
-              barColor="bg-red-500"
-            />
+        <div className="mb-8 rounded-xl border-2 border-blue-200 dark:border-blue-700/50 bg-gradient-to-br from-blue-50/80 to-indigo-50/40 dark:from-blue-950/20 dark:to-gray-800 p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-sm">📋</span>
+            <h2 className="text-lg font-semibold text-blue-700 dark:text-blue-400">
+              Statut des factures
+            </h2>
+          </div>
+
+          {/* ── Cartes résumé ── */}
+          <div className="mb-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="rounded-lg border border-blue-200/50 dark:border-blue-700/30 bg-white/80 dark:bg-gray-800/80 p-3 text-center">
+              <p className="text-lg font-bold text-green-600 dark:text-green-400">{statutStats.payee.count}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">Payees</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">{fmt(statutStats.payee.total)}</p>
+            </div>
+            <div className="rounded-lg border border-blue-200/50 dark:border-blue-700/30 bg-white/80 dark:bg-gray-800/80 p-3 text-center">
+              <p className="text-lg font-bold text-yellow-600 dark:text-yellow-400">{statutStats.envoyee.count}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">Envoyees</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">{fmt(statutStats.envoyee.total)}</p>
+            </div>
+            <div className="rounded-lg border border-blue-200/50 dark:border-blue-700/30 bg-white/80 dark:bg-gray-800/80 p-3 text-center">
+              <p className="text-lg font-bold text-gray-600 dark:text-gray-400">{statutStats.brouillon.count}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">Brouillons</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">{fmt(statutStats.brouillon.total)}</p>
+            </div>
+            <div className="rounded-lg border border-blue-200/50 dark:border-blue-700/30 bg-white/80 dark:bg-gray-800/80 p-3 text-center">
+              <p className="text-lg font-bold text-red-600 dark:text-red-400">{statutStats.en_retard.count}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">En retard</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">{fmt(statutStats.en_retard.total)}</p>
+            </div>
+          </div>
+
+          {/* ── Tableau détaillé ── */}
+          <div className="overflow-hidden rounded-lg border border-blue-200/50 dark:border-blue-700/30">
+            <table className="w-full text-xs">
+              <thead className="bg-blue-100/50 dark:bg-blue-900/20 text-xs uppercase text-gray-500 dark:text-gray-400">
+                <tr>
+                  <th className="px-3 py-2 text-left">Statut</th>
+                  <th className="px-3 py-2 text-right">Nombre</th>
+                  <th className="px-3 py-2 text-right">Montant</th>
+                  <th className="px-3 py-2 text-right">% du total</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-blue-100 dark:divide-blue-800/50">
+                {[
+                  { label: "Payees", data: statutStats.payee, color: "text-green-600 dark:text-green-400" },
+                  { label: "Envoyees", data: statutStats.envoyee, color: "text-yellow-600 dark:text-yellow-400" },
+                  { label: "Brouillons", data: statutStats.brouillon, color: "text-gray-600 dark:text-gray-400" },
+                  { label: "En retard", data: statutStats.en_retard, color: "text-red-600 dark:text-red-400" },
+                ].map((row) => {
+                  const pct = stats.nbFactures > 0 ? (row.data.count / stats.nbFactures) * 100 : 0;
+                  const totalMontant = statutStats.payee.total + statutStats.envoyee.total + statutStats.brouillon.total + statutStats.en_retard.total;
+                  const pctMontant = totalMontant > 0 ? (row.data.total / totalMontant) * 100 : 0;
+                  return (
+                    <tr key={row.label} className="bg-white/60 dark:bg-gray-800/60">
+                      <td className={`px-3 py-2 font-medium ${row.color}`}>
+                        {row.label}
+                      </td>
+                      <td className="px-3 py-2 text-right text-gray-700 dark:text-gray-300">
+                        {row.data.count}
+                      </td>
+                      <td className="px-3 py-2 text-right text-gray-700 dark:text-gray-300">
+                        {fmt(row.data.total)}
+                      </td>
+                      <td className="px-3 py-2 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <div className="w-16 h-1.5 rounded-full bg-gray-200 dark:bg-gray-700">
+                            <div
+                              className={`h-1.5 rounded-full transition-all duration-500 ${
+                                row.label === "Payees" ? "bg-green-500" :
+                                row.label === "Envoyees" ? "bg-yellow-500" :
+                                row.label === "En retard" ? "bg-red-500" : "bg-gray-400"
+                              }`}
+                              style={{ width: `${Math.min(pctMontant, 100)}%` }}
+                            />
+                          </div>
+                          <span className="text-gray-700 dark:text-gray-300 w-10 text-right">{pctMontant.toFixed(0)}%</span>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+              <tfoot className="bg-blue-50/80 dark:bg-blue-900/10 border-t border-blue-200/50 dark:border-blue-700/30">
+                <tr>
+                  <td className="px-3 py-2 font-semibold text-blue-700 dark:text-blue-400">Total</td>
+                  <td className="px-3 py-2 text-right font-semibold text-gray-900 dark:text-gray-100">{stats.nbFactures}</td>
+                  <td className="px-3 py-2 text-right font-semibold text-gray-900 dark:text-gray-100">{fmt(stats.totalFacture)}</td>
+                  <td className="px-3 py-2 text-right font-semibold text-gray-900 dark:text-gray-100">100%</td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
         </div>
 
