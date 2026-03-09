@@ -15,6 +15,7 @@ interface Vehicule {
   id: string;
   marque: string;
   modele: string;
+  annee: string;
   plaque: string;
   vin: string;
   moteur: string;
@@ -265,7 +266,7 @@ function BonsTravailPage() {
     const { data, error } = await supabase
       .from("bons_travail")
       .select(
-        "*, chrono_segments, clients(id, nom, prenom), vehicules(id, marque, modele, plaque, vin, moteur, lieu_fabrication)"
+        "*, chrono_segments, clients(id, nom, prenom), vehicules(id, marque, modele, annee, plaque, vin, moteur, lieu_fabrication)"
       )
       .order("date_creation", { ascending: false });
 
@@ -285,7 +286,7 @@ function BonsTravailPage() {
   async function fetchVehicules() {
     const { data } = await supabase
       .from("vehicules")
-      .select("id, marque, modele, plaque, vin, moteur, lieu_fabrication")
+      .select("id, marque, modele, annee, plaque, vin, moteur, lieu_fabrication")
       .order("marque");
     setVehicules(data || []);
   }
@@ -445,7 +446,7 @@ function BonsTravailPage() {
 <div class="subtitle">Date : ${form.date_creation} | Statut : ${statutLabel}</div>
 <div class="grid">
   <div class="field"><label>Client</label><span>${client ? `${client.nom} ${client.prenom}` : "—"}</span></div>
-  <div class="field"><label>Vehicule</label><span>${vehicule ? `${vehicule.marque} ${vehicule.modele} ${vehicule.plaque ? "— " + vehicule.plaque : ""}` : "—"}</span></div>
+  <div class="field"><label>Vehicule</label><span>${vehicule ? `${vehicule.marque} ${vehicule.modele} ${vehicule.annee || ""} ${vehicule.plaque ? "— " + vehicule.plaque : ""}`.trim() : "—"}</span></div>
   <div class="field"><label>Mecanicien</label><span>${form.mecanicien || "—"}</span></div>
   <div class="field"><label>Km</label><span>${form.km || "—"}</span></div>
   <div class="field"><label>Heure debut</label><span>${form.heure_debut || "—"}</span></div>
@@ -596,7 +597,7 @@ ${segmentsHtml}
                     </td>
                     <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                       {bon.vehicules
-                        ? `${bon.vehicules.marque} ${bon.vehicules.modele}`
+                        ? `${bon.vehicules.marque} ${bon.vehicules.modele} ${bon.vehicules.annee || ""}`.trim()
                         : "\u2014"}
                     </td>
                     <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
@@ -686,7 +687,7 @@ ${segmentsHtml}
                     <option value="">-- Vehicule --</option>
                     {vehicules.map((v) => (
                       <option key={v.id} value={v.id}>
-                        {v.marque} {v.modele}{" "}
+                        {v.marque} {v.modele} {v.annee || ""}{" "}
                         {v.plaque ? `\u2014 ${v.plaque}` : ""}
                       </option>
                     ))}
