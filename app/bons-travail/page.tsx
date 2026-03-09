@@ -411,6 +411,67 @@ function BonsTravailPage() {
     else fetchBons();
   }
 
+  /* ── Imprimer ── */
+  function handlePrint() {
+    const client = clients.find((c) => c.id === form.client_id);
+    const vehicule = vehicules.find((v) => v.id === form.vehicule_id);
+    const statutLabel = STATUTS.find((s) => s.value === form.statut)?.label || form.statut;
+
+    const segments = segmentsRef.current;
+    const segmentsHtml = segments.length > 0
+      ? `<table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:4px">
+          <tr style="background:#f3f4f6"><th style="border:1px solid #d1d5db;padding:4px 8px;text-align:left">Debut</th><th style="border:1px solid #d1d5db;padding:4px 8px;text-align:left">Fin</th></tr>
+          ${segments.map((s) => `<tr><td style="border:1px solid #d1d5db;padding:4px 8px">${s.debut || "—"}</td><td style="border:1px solid #d1d5db;padding:4px 8px">${s.fin || "en cours"}</td></tr>`).join("")}
+        </table>`
+      : "";
+
+    const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Bon de travail</title>
+<style>
+  body{font-family:Arial,sans-serif;margin:20px;color:#111}
+  h1{font-size:20px;margin-bottom:4px}
+  .subtitle{font-size:12px;color:#666;margin-bottom:16px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;margin-bottom:12px}
+  .field label{font-size:10px;font-weight:600;color:#555;text-transform:uppercase;display:block}
+  .field span{font-size:13px}
+  .section{margin-top:12px;margin-bottom:4px;font-size:13px;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:2px}
+  .box{border:1px solid #d1d5db;border-radius:4px;padding:8px;font-size:12px;min-height:60px;white-space:pre-wrap;margin-bottom:8px}
+  .boxes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .chrono{font-size:13px;margin-top:8px}
+  @media print{body{margin:10px}}
+</style>
+</head><body>
+<h1>Bon de travail</h1>
+<div class="subtitle">Date : ${form.date_creation} | Statut : ${statutLabel}</div>
+<div class="grid">
+  <div class="field"><label>Client</label><span>${client ? `${client.nom} ${client.prenom}` : "—"}</span></div>
+  <div class="field"><label>Vehicule</label><span>${vehicule ? `${vehicule.marque} ${vehicule.modele} ${vehicule.plaque ? "— " + vehicule.plaque : ""}` : "—"}</span></div>
+  <div class="field"><label>Mecanicien</label><span>${form.mecanicien || "—"}</span></div>
+  <div class="field"><label>Km</label><span>${form.km || "—"}</span></div>
+  <div class="field"><label>Heure debut</label><span>${form.heure_debut || "—"}</span></div>
+  <div class="field"><label>Heure fin</label><span>${form.heure_fin || "—"}</span></div>
+  ${vehicule?.vin ? `<div class="field"><label>VIN</label><span>${vehicule.vin}</span></div>` : ""}
+  ${vehicule?.moteur ? `<div class="field"><label>Moteur</label><span>${vehicule.moteur}</span></div>` : ""}
+</div>
+${chronoDisplayMs > 0 ? `<div class="chrono"><strong>Chrono :</strong> ${chronoDisplay(chronoDisplayMs)}</div>` : ""}
+${segmentsHtml}
+<div class="boxes" style="margin-top:12px">
+  <div><div class="section">Symptomes / Travaux a effectuer</div><div class="box">${form.symptomes || "—"}</div></div>
+  <div><div class="section">Diagnostique technicien</div><div class="box">${form.diagnostic || "—"}</div></div>
+  <div><div class="section">Pieces a commander</div><div class="box">${form.travaux || "—"}</div></div>
+  <div><div class="section">Notes</div><div class="box">${form.notes || "—"}</div></div>
+</div>
+</body></html>`;
+
+    const w = window.open("", "_blank", "width=800,height=600");
+    if (w) {
+      w.document.write(html);
+      w.document.close();
+      w.focus();
+      w.print();
+    }
+  }
+
   /* ── Helpers ── */
   function getStatutBadge(statut: string) {
     const s = STATUTS.find((st) => st.value === statut);
@@ -824,6 +885,13 @@ function BonsTravailPage() {
               </div>
 
               <div className="flex justify-end gap-2 pt-1 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  type="button"
+                  onClick={handlePrint}
+                  className="rounded border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 mr-auto"
+                >
+                  Imprimer
+                </button>
                 <button
                   type="button"
                   onClick={closeForm}
