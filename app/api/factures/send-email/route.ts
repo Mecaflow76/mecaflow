@@ -78,8 +78,8 @@ export async function POST(req: NextRequest) {
         price: parseFloat(String(r.price)) || 0,
       })),
       client: {
-        nom: client.nom,
-        prenom: client.prenom,
+        nom: client?.nom || "",
+        prenom: client?.prenom || "",
         email: client?.email || "",
       },
       vehicule: vehicule
