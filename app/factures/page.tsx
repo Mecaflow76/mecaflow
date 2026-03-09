@@ -10,6 +10,7 @@ interface Client {
   nom: string;
   prenom: string;
   email?: string;
+  email2?: string;
 }
 interface Vehicule {
   id: string;
@@ -157,7 +158,7 @@ function FacturesPage() {
   async function fetchClients() {
     const { data } = await supabase
       .from("clients")
-      .select("id, nom, prenom, email")
+      .select("id, nom, prenom, email, email2")
       .order("nom");
     setClients(data || []);
   }
@@ -1131,7 +1132,7 @@ function FacturesPage() {
                       disabled={sendingEmail || form.statut === "annulee"}
                       onClick={() => {
                         const c = clients.find((cl) => cl.id === form.client_id);
-                        if (!c?.email) {
+                        if (!c?.email && !c?.email2) {
                           setEmailResult({ error: "Ce client n'a pas d'adresse courriel. Ajoutez-la dans la fiche client." });
                           setTimeout(() => setEmailResult(null), 5000);
                           return;
@@ -1184,12 +1185,25 @@ function FacturesPage() {
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                     Envoyer cette facture de <span className="font-semibold text-gray-900 dark:text-gray-100">{fmt(totals.total)}</span> a :
                   </p>
-                  <p className="text-base font-medium text-blue-600 dark:text-blue-400 mb-4">
+                  <div className="mb-4">
                     {(() => {
                       const c = clients.find((cl) => cl.id === form.client_id);
-                      return c ? `${c.prenom} ${c.nom} — ${c.email}` : "";
+                      if (!c) return null;
+                      const emails = [c.email, c.email2].filter(Boolean);
+                      return (
+                        <>
+                          <p className="text-base font-medium text-blue-600 dark:text-blue-400">
+                            {c.prenom} {c.nom}
+                          </p>
+                          {emails.map((em, i) => (
+                            <p key={i} className="text-sm text-blue-500 dark:text-blue-300">
+                              {em}
+                            </p>
+                          ))}
+                        </>
+                      );
                     })()}
-                  </p>
+                  </div>
                   <div className="flex justify-end gap-3">
                     <button
                       type="button"

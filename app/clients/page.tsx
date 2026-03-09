@@ -9,6 +9,7 @@ interface Client {
   nom: string;
   prenom: string;
   email: string;
+  email2: string;
   telephone: string;
   adresse: string;
   ville: string;
@@ -31,6 +32,7 @@ const emptyForm = {
   nom: "",
   prenom: "",
   email: "",
+  email2: "",
   telephone: "",
   adresse: "",
   ville: "",
@@ -116,6 +118,7 @@ export default function ClientsPage() {
       nom: client.nom,
       prenom: client.prenom,
       email: client.email,
+      email2: client.email2 || "",
       telephone: client.telephone,
       adresse: client.adresse || "",
       ville: client.ville || "",
@@ -194,6 +197,7 @@ export default function ClientsPage() {
       client.nom?.toLowerCase().includes(term) ||
       client.prenom?.toLowerCase().includes(term) ||
       client.email?.toLowerCase().includes(term) ||
+      client.email2?.toLowerCase().includes(term) ||
       client.telephone?.includes(term) ||
       client.ville?.toLowerCase().includes(term)
     );
@@ -266,8 +270,10 @@ export default function ClientsPage() {
                         <div className="font-medium text-gray-900 dark:text-gray-100">
                           {client.prenom} {client.nom}
                         </div>
-                        {client.email && (
-                          <div className="text-xs text-gray-500 dark:text-gray-400">{client.email}</div>
+                        {(client.email || client.email2) && (
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {[client.email, client.email2].filter(Boolean).join(" | ")}
+                          </div>
                         )}
                       </td>
                       <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
@@ -353,18 +359,33 @@ export default function ClientsPage() {
                 </div>
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Telephone
+                    Email 2
                   </label>
                   <input
-                    type="tel"
-                    placeholder="(450)750-6862"
-                    value={form.telephone}
+                    type="email"
+                    placeholder="Optionnel"
+                    value={form.email2}
                     onChange={(e) =>
-                      setForm({ ...form, telephone: formatTelephone(e.target.value) })
+                      setForm({ ...form, email2: e.target.value })
                     }
                     className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Telephone
+                </label>
+                <input
+                  type="tel"
+                  placeholder="(450)750-6862"
+                  value={form.telephone}
+                  onChange={(e) =>
+                    setForm({ ...form, telephone: formatTelephone(e.target.value) })
+                  }
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
               </div>
 
               <div>

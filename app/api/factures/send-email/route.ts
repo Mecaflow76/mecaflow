@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     const { data: facture, error: fetchError } = await supabase
       .from("factures")
       .select(
-        "id, date_facture, description, garantie, km, discount_pct, deposit, notes, statut, montant_total, labour_rows, parts_rows, clients(id, nom, prenom, email), vehicules(id, marque, modele, plaque, vin)"
+        "id, date_facture, description, garantie, km, discount_pct, deposit, notes, statut, montant_total, labour_rows, parts_rows, clients(id, nom, prenom, email, email2), vehicules(id, marque, modele, plaque, vin)"
       )
       .eq("id", factureId)
       .single();
@@ -34,10 +34,11 @@ export async function POST(req: NextRequest) {
     }
 
     /* ── 2. Validations ── */
-    const client = facture.clients as unknown as { id: string; nom: string; prenom: string; email: string } | null;
+    const client = facture.clients as unknown as { id: string; nom: string; prenom: string; email: string; email2: string } | null;
     const vehicule = facture.vehicules as unknown as { id: string; marque: string; modele: string; plaque: string; vin: string } | null;
 
-    if (!client?.email) {
+    const emailList = [client?.email, client?.email2].filter(Boolean) as string[];
+    if (emailList.length === 0) {
       return NextResponse.json(
         { error: "Ce client n'a pas d'adresse courriel." },
         { status: 400 }
@@ -79,7 +80,7 @@ export async function POST(req: NextRequest) {
       client: {
         nom: client.nom,
         prenom: client.prenom,
-        email: client.email,
+        email: client?.email || "",
       },
       vehicule: vehicule
         ? {
@@ -97,7 +98,7 @@ export async function POST(req: NextRequest) {
     /* ── 5. Envoyer via Resend ── */
     const { error: sendError } = await resend.emails.send({
       from: "Garage Lagarde <factures@garagelagarde.ca>",
-      to: client.email,
+      to: emailList,
       subject: `Facture — Garage Lagarde — ${facture.date_facture}`,
       html,
     });
