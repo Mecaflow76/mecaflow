@@ -572,6 +572,7 @@ ${segmentsHtml}
                   <th className="px-6 py-3">Date</th>
                   <th className="px-6 py-3">Client</th>
                   <th className="px-6 py-3">Vehicule</th>
+                  <th className="px-6 py-3">Moteur</th>
                   <th className="px-6 py-3">Mecanicien</th>
                   <th className="px-6 py-3">Symptomes</th>
                   <th className="px-6 py-3">Statut</th>
@@ -597,6 +598,9 @@ ${segmentsHtml}
                       {bon.vehicules
                         ? `${bon.vehicules.marque} ${bon.vehicules.modele}`
                         : "\u2014"}
+                    </td>
+                    <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
+                      {bon.vehicules?.moteur || "\u2014"}
                     </td>
                     <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                       {bon.mecanicien || "\u2014"}
