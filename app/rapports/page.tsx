@@ -396,57 +396,60 @@ export default function RapportsPage() {
         {/* ════════════ 2-COL: MAIN D'OEUVRE + RENTABILITÉ ════════════ */}
         <div className="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* ── Left: Main d'oeuvre ── */}
-          <div>
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Main d&apos;oeuvre facturee
-            </h2>
+          <div className="rounded-xl border-2 border-purple-200 dark:border-purple-700/50 bg-gradient-to-br from-purple-50/80 to-indigo-50/40 dark:from-purple-950/20 dark:to-gray-800 p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-sm">🔧</span>
+              <h2 className="text-lg font-semibold text-purple-700 dark:text-purple-400">
+                Main d&apos;oeuvre facturee
+              </h2>
+            </div>
             <div className="mb-4 grid grid-cols-3 gap-3">
-              <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 text-center">
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <div className="rounded-lg border border-purple-200/50 dark:border-purple-700/30 bg-white/80 dark:bg-gray-800/80 p-3 text-center">
+                <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
                   {moStats.totalH.toFixed(1)}h
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">
                   Heures totales
                 </p>
               </div>
-              <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 text-center">
-                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                  {fmt(moStats.totalRev)}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">Revenu M.O.</p>
-              </div>
-              <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 text-center">
-                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                  {fmt(moStats.tauxMoyen)}
+              <div className="rounded-lg border border-purple-200/50 dark:border-purple-700/30 bg-white/80 dark:bg-gray-800/80 p-3 text-center">
+                <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                  {fmt(moStats.tauxMoyen)}/h
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">
-                  Taux moyen /h
+                  Taux moyen
                 </p>
+              </div>
+              <div className="rounded-lg border border-purple-200/50 dark:border-purple-700/30 bg-white/80 dark:bg-gray-800/80 p-3 text-center">
+                <p className="text-lg font-bold text-purple-600 dark:text-purple-400">
+                  {fmt(moStats.totalRev)}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 uppercase mt-1">Revenu Total</p>
               </div>
             </div>
 
             {moStats.top.length > 0 && (
-              <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-                <table className="w-full text-sm">
-                  <thead className="bg-gray-50 dark:bg-gray-900 text-xs uppercase text-gray-500 dark:text-gray-400">
+              <div className="overflow-hidden rounded-lg border border-purple-200/50 dark:border-purple-700/30">
+                <table className="w-full text-xs">
+                  <thead className="bg-purple-100/50 dark:bg-purple-900/20 text-xs uppercase text-gray-500 dark:text-gray-400">
                     <tr>
-                      <th className="px-4 py-2 text-left">Type de travail</th>
-                      <th className="px-4 py-2 text-right">Heures</th>
-                      <th className="px-4 py-2 text-right">Revenu</th>
-                      <th className="px-4 py-2 text-right">Taux moy.</th>
+                      <th className="px-3 py-2 text-left">Type de travail</th>
+                      <th className="px-3 py-2 text-right">Heures</th>
+                      <th className="px-3 py-2 text-right">Revenu</th>
+                      <th className="px-3 py-2 text-right">Taux moy.</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  <tbody className="divide-y divide-purple-100 dark:divide-purple-800/50">
                     {moStats.top.map(([desc, data]) => (
-                      <tr key={desc} className="bg-white dark:bg-gray-800">
-                        <td className="px-4 py-2.5 text-gray-900 dark:text-gray-100">{desc}</td>
-                        <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-300">
+                      <tr key={desc} className="bg-white/60 dark:bg-gray-800/60">
+                        <td className="px-3 py-2 text-gray-900 dark:text-gray-100">{desc}</td>
+                        <td className="px-3 py-2 text-right text-gray-700 dark:text-gray-300">
                           {data.h.toFixed(1)}h
                         </td>
-                        <td className="px-4 py-2.5 text-right font-medium text-gray-900 dark:text-gray-100">
+                        <td className="px-3 py-2 text-right font-medium text-gray-900 dark:text-gray-100">
                           {fmt(data.rev)}
                         </td>
-                        <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-300">
+                        <td className="px-3 py-2 text-right text-gray-700 dark:text-gray-300">
                           {fmt(data.h > 0 ? data.rev / data.h : 0)}/h
                         </td>
                       </tr>

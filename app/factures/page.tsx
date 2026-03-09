@@ -530,8 +530,8 @@ function FacturesPage() {
 
       {/* ═══════════════════ MODAL FACTURE ═══════════════════ */}
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
-          <div className="my-8 w-full max-w-4xl rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-2">
+          <div className="my-2 w-full max-w-6xl rounded-xl bg-white dark:bg-gray-800 p-4 shadow-xl">
             {/* ═══ En-tête impression PRO ═══ */}
             <div className="hidden print:block mb-0 print-header-pro">
               {/* Bandeau garage bleu foncé */}
@@ -548,11 +548,11 @@ function FacturesPage() {
                 <span style={{ color: "#bfdbfe", fontSize: "13px" }}>{form.date_facture}</span>
               </div>
             </div>
-            <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-gray-100 print:hidden">
+            <h2 className="mb-2 text-base font-semibold text-gray-900 dark:text-gray-100 print:hidden">
               {editingFacture ? "Modifier la facture" : "Nouvelle facture"}
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-2">
               {/* ── En-tete impression (texte statique) ── */}
               {(() => {
                 const sc = clients.find((c) => c.id === form.client_id);
@@ -577,10 +577,10 @@ function FacturesPage() {
                 );
               })()}
 
-              {/* ── En-tete ecran (selects) ── */}
-              <div className="grid grid-cols-3 gap-4 print:hidden">
+              {/* ── En-tete ecran (selects) — 6 colonnes compactes ── */}
+              <div className="grid grid-cols-6 gap-2 print:hidden">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="mb-0.5 block text-xs font-medium text-gray-700 dark:text-gray-300">
                     Client *
                   </label>
                   <select
@@ -593,9 +593,9 @@ function FacturesPage() {
                         vehicule_id: "",
                       })
                     }
-                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1.5 text-xs text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
                   >
-                    <option value="">-- Selectionner --</option>
+                    <option value="">-- Client --</option>
                     {clients.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.prenom} {c.nom}
@@ -604,7 +604,7 @@ function FacturesPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="mb-0.5 block text-xs font-medium text-gray-700 dark:text-gray-300">
                     Vehicule
                   </label>
                   <select
@@ -612,9 +612,9 @@ function FacturesPage() {
                     onChange={(e) =>
                       setForm({ ...form, vehicule_id: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1.5 text-xs text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
                   >
-                    <option value="">-- Selectionner --</option>
+                    <option value="">-- Vehicule --</option>
                     {filteredVehicules.map((v) => (
                       <option key={v.id} value={v.id}>
                         {v.marque} {v.modele}{" "}
@@ -624,7 +624,7 @@ function FacturesPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="mb-0.5 block text-xs font-medium text-gray-700 dark:text-gray-300">
                     Date *
                   </label>
                   <input
@@ -634,7 +634,51 @@ function FacturesPage() {
                     onChange={(e) =>
                       setForm({ ...form, date_facture: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1.5 text-xs text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="mb-0.5 block text-xs font-medium text-gray-700 dark:text-gray-300">
+                    Km
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="75000"
+                    value={form.km}
+                    onChange={(e) => setForm({ ...form, km: e.target.value })}
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1.5 text-xs text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="mb-0.5 block text-xs font-medium text-gray-700 dark:text-gray-300">
+                    Statut
+                  </label>
+                  <select
+                    value={form.statut}
+                    onChange={(e) =>
+                      setForm({ ...form, statut: e.target.value })
+                    }
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1.5 text-xs text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
+                  >
+                    {STATUTS.map((s) => (
+                      <option key={s.value} value={s.value}>
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-0.5 block text-xs font-medium text-gray-700 dark:text-gray-300">
+                    Garantie
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="3 mois / 5 000 km"
+                    value={form.garantie}
+                    onChange={(e) =>
+                      setForm({ ...form, garantie: e.target.value })
+                    }
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1.5 text-xs text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
                   />
                 </div>
               </div>
@@ -644,7 +688,7 @@ function FacturesPage() {
                 const v = vehicules.find((x) => x.id === form.vehicule_id);
                 if (!v || (!v.vin && !v.moteur && !v.lieu_fabrication)) return null;
                 return (
-                  <div className="flex flex-wrap gap-4 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 px-4 py-2.5 text-xs text-gray-600 dark:text-gray-400">
+                  <div className="flex flex-wrap gap-3 rounded bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 px-3 py-1.5 text-[10px] text-gray-600 dark:text-gray-400">
                     {v.vin && <span><strong className="text-gray-700 dark:text-gray-300">VIN :</strong> {v.vin}</span>}
                     {v.moteur && <span><strong className="text-gray-700 dark:text-gray-300">Moteur :</strong> {v.moteur}</span>}
                     {v.lieu_fabrication && <span><strong className="text-gray-700 dark:text-gray-300">Lieu fab. :</strong> {v.lieu_fabrication}</span>}
@@ -666,99 +710,41 @@ function FacturesPage() {
                 )}
               </div>
 
-              {/* Km/Statut/Garantie ecran */}
-              <div className="grid grid-cols-3 gap-4 print:hidden">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Kilometrage
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="75000"
-                    value={form.km}
-                    onChange={(e) => setForm({ ...form, km: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Statut
-                  </label>
-                  <select
-                    value={form.statut}
-                    onChange={(e) =>
-                      setForm({ ...form, statut: e.target.value })
-                    }
-                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  >
-                    {STATUTS.map((s) => (
-                      <option key={s.value} value={s.value}>
-                        {s.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Garantie
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="3 mois / 5 000 km"
-                    value={form.garantie}
-                    onChange={(e) =>
-                      setForm({ ...form, garantie: e.target.value })
-                    }
-                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300 print:hidden">
+                <label className="mb-0.5 block text-xs font-medium text-gray-700 dark:text-gray-300 print:hidden">
                   Description des travaux
                 </label>
                 <span className="hidden print:block text-sm font-semibold mb-1">Description des travaux</span>
                 <textarea
-                  rows={2}
+                  rows={1}
                   value={form.description}
                   onChange={(e) =>
                     setForm({ ...form, description: e.target.value })
                   }
-                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1 text-xs text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
                 />
               </div>
 
               {/* ════════════ MAIN D'OEUVRE ════════════ */}
               <div>
-                <div className="mb-2">
-                  <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 print:uppercase print:text-xs print:text-gray-500 print:tracking-wide">
-                    Main d&apos;oeuvre
-                  </h3>
-                </div>
-                  <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
-                    <table className="w-full text-sm">
-                      <thead className="bg-gray-50 dark:bg-gray-900 text-xs text-gray-500 dark:text-gray-400">
+                <h3 className="mb-1 text-xs font-semibold text-gray-800 dark:text-gray-200 uppercase tracking-wide print:text-gray-500">
+                  Main d&apos;oeuvre
+                </h3>
+                  <div className="overflow-hidden rounded border border-gray-200 dark:border-gray-700">
+                    <table className="w-full text-xs">
+                      <thead className="bg-gray-50 dark:bg-gray-900 text-[10px] text-gray-500 dark:text-gray-400 uppercase">
                         <tr>
-                          <th className="px-3 py-2 text-left" style={{ width: "44%" }}>
-                            Description
-                          </th>
-                          <th className="px-3 py-2 text-center" style={{ width: "14%" }}>
-                            Heures
-                          </th>
-                          <th className="px-3 py-2 text-center" style={{ width: "18%" }}>
-                            Taux ($/h)
-                          </th>
-                          <th className="px-3 py-2 text-right" style={{ width: "16%" }}>
-                            Sous-total
-                          </th>
-                          <th className="px-3 py-2 text-center print:hidden" style={{ width: "8%" }}></th>
+                          <th className="px-2 py-1 text-left" style={{ width: "44%" }}>Description</th>
+                          <th className="px-2 py-1 text-center" style={{ width: "14%" }}>Heures</th>
+                          <th className="px-2 py-1 text-center" style={{ width: "18%" }}>Taux ($/h)</th>
+                          <th className="px-2 py-1 text-right" style={{ width: "16%" }}>Sous-total</th>
+                          <th className="px-1 py-1 text-center print:hidden" style={{ width: "8%" }}></th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                         {labourRows.map((r) => (
                           <tr key={r.id} className="bg-white dark:bg-gray-800">
-                            <td className="px-2 py-1.5">
+                            <td className="px-1 py-0.5">
                               <input
                                 type="text"
                                 value={r.desc}
@@ -766,10 +752,10 @@ function FacturesPage() {
                                   updateLabour(r.id, "desc", e.target.value)
                                 }
                                 placeholder="Description..."
-                                className="w-full rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
+                                className="w-full rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-1.5 py-1 text-xs text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
                               />
                             </td>
-                            <td className="px-2 py-1.5">
+                            <td className="px-1 py-0.5">
                               <input
                                 type="number"
                                 step="0.25"
@@ -778,10 +764,10 @@ function FacturesPage() {
                                 onChange={(e) =>
                                   updateLabour(r.id, "qty", e.target.value)
                                 }
-                                className="w-full rounded border border-gray-200 px-2 py-1.5 text-center text-sm focus:border-blue-500 focus:outline-none"
+                                className="w-full rounded border border-gray-200 px-1.5 py-1 text-center text-xs focus:border-blue-500 focus:outline-none"
                               />
                             </td>
-                            <td className="px-2 py-1.5">
+                            <td className="px-1 py-0.5">
                               <input
                                 type="number"
                                 step="0.01"
@@ -790,17 +776,17 @@ function FacturesPage() {
                                 onChange={(e) =>
                                   updateLabour(r.id, "rate", e.target.value)
                                 }
-                                className="w-full rounded border border-gray-200 px-2 py-1.5 text-center text-sm focus:border-blue-500 focus:outline-none"
+                                className="w-full rounded border border-gray-200 px-1.5 py-1 text-center text-xs focus:border-blue-500 focus:outline-none"
                               />
                             </td>
-                            <td className="px-3 py-1.5 text-right text-sm font-medium text-gray-900 dark:text-gray-100">
+                            <td className="px-2 py-0.5 text-right text-xs font-medium text-gray-900 dark:text-gray-100">
                               {fmt(r.qty * r.rate)}
                             </td>
-                            <td className="px-2 py-1.5 text-center print:hidden">
+                            <td className="px-1 py-0.5 text-center print:hidden">
                               <button
                                 type="button"
                                 onClick={() => removeLabour(r.id)}
-                                className="text-red-400 hover:text-red-600 text-lg leading-none"
+                                className="text-red-400 hover:text-red-600 text-sm leading-none"
                                 title="Supprimer"
                               >
                                 &times;
@@ -812,7 +798,7 @@ function FacturesPage() {
                           className="cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors print:hidden"
                           onClick={addLabour}
                         >
-                          <td colSpan={5} className="px-3 py-2 text-center text-xs text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400">
+                          <td colSpan={5} className="px-2 py-1 text-center text-[10px] text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400">
                             + Ajouter une ligne
                           </td>
                         </tr>
@@ -823,39 +809,23 @@ function FacturesPage() {
 
               {/* ════════════ PIECES ════════════ */}
               <div>
-                <div className="mb-2">
-                  <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 print:uppercase print:text-xs print:text-gray-500 print:tracking-wide">
-                    Pieces
-                  </h3>
-                </div>
-                  <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
-                    <table className="w-full text-sm">
-                      <thead className="bg-gray-50 dark:bg-gray-900 text-xs text-gray-500 dark:text-gray-400">
+                <h3 className="mb-1 text-xs font-semibold text-gray-800 dark:text-gray-200 uppercase tracking-wide print:text-gray-500">
+                  Pieces
+                </h3>
+                  <div className="overflow-hidden rounded border border-gray-200 dark:border-gray-700">
+                    <table className="w-full text-xs">
+                      <thead className="bg-gray-50 dark:bg-gray-900 text-[10px] text-gray-500 dark:text-gray-400 uppercase">
                         <tr>
-                          <th className="px-3 py-2 text-left" style={{ width: "26%" }}>
-                            Description
+                          <th className="px-2 py-1 text-left" style={{ width: "26%" }}>Description</th>
+                          <th className="px-2 py-1 text-center" style={{ width: "12%" }}>N&deg; piece</th>
+                          <th className="px-1 py-1 text-center" style={{ width: "7%" }}>Qte</th>
+                          <th className="px-2 py-1 text-center print:hidden" style={{ width: "12%" }}>
+                            <span title="Cout interne (non visible au client)">Cout</span>
                           </th>
-                          <th className="px-3 py-2 text-center" style={{ width: "12%" }}>
-                            N&deg; piece
-                          </th>
-                          <th className="px-3 py-2 text-center" style={{ width: "8%" }}>
-                            Qte
-                          </th>
-                          <th className="px-3 py-2 text-center print:hidden" style={{ width: "13%" }}>
-                            <span title="Cout interne (non visible au client)">
-                              Cout
-                            </span>
-                          </th>
-                          <th className="px-3 py-2 text-center" style={{ width: "13%" }}>
-                            Prix unit.
-                          </th>
-                          <th className="px-3 py-2 text-right print:hidden" style={{ width: "10%" }}>
-                            Marge
-                          </th>
-                          <th className="px-3 py-2 text-right" style={{ width: "12%" }}>
-                            Sous-total
-                          </th>
-                          <th className="px-3 py-2 text-center print:hidden" style={{ width: "6%" }}></th>
+                          <th className="px-2 py-1 text-center" style={{ width: "12%" }}>Prix unit.</th>
+                          <th className="px-2 py-1 text-right print:hidden" style={{ width: "9%" }}>Marge</th>
+                          <th className="px-2 py-1 text-right" style={{ width: "12%" }}>Sous-total</th>
+                          <th className="px-1 py-1 text-center print:hidden" style={{ width: "5%" }}></th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -878,7 +848,7 @@ function FacturesPage() {
                               : "text-gray-400";
                           return (
                             <tr key={r.id} className="bg-white dark:bg-gray-800">
-                              <td className="px-2 py-1.5">
+                              <td className="px-1 py-0.5">
                                 <input
                                   type="text"
                                   value={r.desc}
@@ -886,10 +856,10 @@ function FacturesPage() {
                                     updatePart(r.id, "desc", e.target.value)
                                   }
                                   placeholder="Description..."
-                                  className="w-full rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
+                                  className="w-full rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-1.5 py-1 text-xs text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
                                 />
                               </td>
-                              <td className="px-2 py-1.5">
+                              <td className="px-1 py-0.5">
                                 <input
                                   type="text"
                                   value={r.num}
@@ -897,10 +867,10 @@ function FacturesPage() {
                                     updatePart(r.id, "num", e.target.value)
                                   }
                                   placeholder="OEM-123"
-                                  className="w-full rounded border border-gray-200 px-2 py-1.5 text-center text-sm focus:border-blue-500 focus:outline-none"
+                                  className="w-full rounded border border-gray-200 px-1.5 py-1 text-center text-xs focus:border-blue-500 focus:outline-none"
                                 />
                               </td>
-                              <td className="px-2 py-1.5">
+                              <td className="px-1 py-0.5">
                                 <input
                                   type="number"
                                   min="1"
@@ -908,10 +878,10 @@ function FacturesPage() {
                                   onChange={(e) =>
                                     updatePart(r.id, "qty", e.target.value)
                                   }
-                                  className="w-full rounded border border-gray-200 px-2 py-1.5 text-center text-sm focus:border-blue-500 focus:outline-none"
+                                  className="w-full rounded border border-gray-200 px-1 py-1 text-center text-xs focus:border-blue-500 focus:outline-none"
                                 />
                               </td>
-                              <td className="px-2 py-1.5 print:hidden">
+                              <td className="px-1 py-0.5 print:hidden">
                                 <input
                                   type="number"
                                   step="0.01"
@@ -920,11 +890,11 @@ function FacturesPage() {
                                   onChange={(e) =>
                                     updatePart(r.id, "cost", e.target.value)
                                   }
-                                  className="w-full rounded border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/30 px-2 py-1.5 text-center text-sm text-gray-900 dark:text-gray-100 focus:border-amber-500 focus:outline-none"
+                                  className="w-full rounded border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/30 px-1.5 py-1 text-center text-xs text-gray-900 dark:text-gray-100 focus:border-amber-500 focus:outline-none"
                                   title="Cout interne (non visible au client)"
                                 />
                               </td>
-                              <td className="px-2 py-1.5">
+                              <td className="px-1 py-0.5">
                                 <input
                                   type="number"
                                   step="0.01"
@@ -933,22 +903,22 @@ function FacturesPage() {
                                   onChange={(e) =>
                                     updatePart(r.id, "price", e.target.value)
                                   }
-                                  className="w-full rounded border border-gray-200 px-2 py-1.5 text-center text-sm focus:border-blue-500 focus:outline-none"
+                                  className="w-full rounded border border-gray-200 px-1.5 py-1 text-center text-xs focus:border-blue-500 focus:outline-none"
                                 />
                               </td>
                               <td
-                                className={`px-3 py-1.5 text-right text-sm font-medium print:hidden ${margeColor}`}
+                                className={`px-2 py-0.5 text-right text-xs font-medium print:hidden ${margeColor}`}
                               >
                                 {marge !== null ? `${marge}%` : "\u2014"}
                               </td>
-                              <td className="px-3 py-1.5 text-right text-sm font-medium text-gray-900 dark:text-gray-100">
+                              <td className="px-2 py-0.5 text-right text-xs font-medium text-gray-900 dark:text-gray-100">
                                 {fmt(r.qty * rPrice)}
                               </td>
-                              <td className="px-2 py-1.5 text-center print:hidden">
+                              <td className="px-1 py-0.5 text-center print:hidden">
                                 <button
                                   type="button"
                                   onClick={() => removePart(r.id)}
-                                  className="text-red-400 hover:text-red-600 text-lg leading-none"
+                                  className="text-red-400 hover:text-red-600 text-sm leading-none"
                                   title="Supprimer"
                                 >
                                   &times;
@@ -961,7 +931,7 @@ function FacturesPage() {
                           className="cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors print:hidden"
                           onClick={addPart}
                         >
-                          <td colSpan={8} className="px-3 py-2 text-center text-xs text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400">
+                          <td colSpan={8} className="px-2 py-1 text-center text-[10px] text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400">
                             + Ajouter une piece
                           </td>
                         </tr>
@@ -971,12 +941,12 @@ function FacturesPage() {
               </div>
 
               {/* ════════════ TOTAUX & OPTIONS ════════════ */}
-              <div className="grid grid-cols-2 gap-6 print:grid-cols-1">
+              <div className="grid grid-cols-2 gap-3 print:grid-cols-1">
                 {/* ── Left: discount, deposit, notes (ecran seulement) ── */}
-                <div className="space-y-4 print:hidden">
-                  <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2 print:hidden">
+                  <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <label className="mb-0.5 block text-xs font-medium text-gray-700 dark:text-gray-300">
                         Rabais sur pieces (%)
                       </label>
                       <input
@@ -989,11 +959,11 @@ function FacturesPage() {
                           setForm({ ...form, discount_pct: e.target.value })
                         }
                         placeholder="0"
-                        className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1.5 text-xs text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <label className="mb-0.5 block text-xs font-medium text-gray-700 dark:text-gray-300">
                         Acompte recu ($)
                       </label>
                       <input
@@ -1005,36 +975,36 @@ function FacturesPage() {
                           setForm({ ...form, deposit: e.target.value })
                         }
                         placeholder="0.00"
-                        className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1.5 text-xs text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="mb-0.5 block text-xs font-medium text-gray-700 dark:text-gray-300">
                       Notes (visible sur facture)
                     </label>
                     <textarea
-                      rows={2}
+                      rows={1}
                       value={form.notes}
                       onChange={(e) =>
                         setForm({ ...form, notes: e.target.value })
                       }
-                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1 text-xs text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-amber-700 dark:text-amber-400">
+                    <label className="mb-0.5 block text-xs font-medium text-amber-700 dark:text-amber-400">
                       Notes internes (jamais imprime)
                     </label>
                     <textarea
-                      rows={2}
+                      rows={1}
                       value={form.notes_internes}
                       onChange={(e) =>
                         setForm({ ...form, notes_internes: e.target.value })
                       }
-                      className="w-full rounded-lg border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/30 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                      className="w-full rounded border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/30 px-2 py-1 text-xs text-gray-900 dark:text-gray-100 focus:border-amber-500 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -1048,8 +1018,8 @@ function FacturesPage() {
                 )}
 
                 {/* ── Right: totals box ── */}
-                <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4">
-                  <div className="space-y-2 text-sm">
+                <div className="rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-3">
+                  <div className="space-y-1 text-xs">
                     <div className="flex justify-between">
                       <span className="text-gray-600 dark:text-gray-400">Main d&apos;oeuvre</span>
                       <span className="font-medium">{fmt(totals.labourTotal)}</span>
@@ -1078,7 +1048,7 @@ function FacturesPage() {
                         </span>
                       </div>
                     )}
-                    <div className="border-t border-gray-300 dark:border-gray-600 pt-2 flex justify-between font-medium">
+                    <div className="border-t border-gray-300 dark:border-gray-600 pt-1 flex justify-between font-medium">
                       <span>Sous-total</span>
                       <span>{fmt(totals.sub)}</span>
                     </div>
@@ -1101,7 +1071,7 @@ function FacturesPage() {
                       <span>{fmt(totals.tvq)}</span>
                     </div>
 
-                    <div className="border-t border-gray-300 dark:border-gray-600 pt-2 flex justify-between text-base font-bold">
+                    <div className="border-t border-gray-300 dark:border-gray-600 pt-1 flex justify-between text-sm font-bold">
                       <span>TOTAL</span>
                       <span>{fmt(totals.total)}</span>
                     </div>
@@ -1112,7 +1082,7 @@ function FacturesPage() {
                           <span>Acompte</span>
                           <span>-{fmt(totals.dep)}</span>
                         </div>
-                        <div className="flex justify-between text-base font-bold text-blue-700 dark:text-blue-400">
+                        <div className="flex justify-between text-sm font-bold text-blue-700 dark:text-blue-400">
                           <span>SOLDE DU</span>
                           <span>{fmt(totals.due)}</span>
                         </div>
@@ -1146,12 +1116,12 @@ function FacturesPage() {
               </div>
 
               {/* ── Buttons ── */}
-              <div className="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-4 print:hidden">
+              <div className="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-2 print:hidden">
                 <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={() => window.print()}
-                    className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
+                    className="rounded border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-1.5"
                   >
                     🖨️ Imprimer
                   </button>
@@ -1168,7 +1138,7 @@ function FacturesPage() {
                         }
                         setEmailConfirm(true);
                       }}
-                      className="rounded-lg border border-blue-300 dark:border-blue-600 px-4 py-2 text-sm font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="rounded border border-blue-300 dark:border-blue-600 px-3 py-1.5 text-xs font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {sendingEmail ? (
                         <>
@@ -1185,14 +1155,14 @@ function FacturesPage() {
                   <button
                     type="button"
                     onClick={closeForm}
-                    className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                    className="rounded border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     Annuler
                   </button>
                   <button
                     type="submit"
                     disabled={saving}
-                    className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                    className="rounded bg-blue-600 px-5 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
                   >
                     {saving
                       ? "Enregistrement..."

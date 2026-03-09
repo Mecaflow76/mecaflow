@@ -46,6 +46,7 @@ interface RendezVous {
   statut: string;
   notes: string;
   clients?: Client;
+  vehicules?: Vehicule;
 }
 
 /* ───── Constants ───── */
@@ -121,7 +122,7 @@ interface DragState {
 export default function AgendaPage() {
   const router = useRouter();
   const [dateRef, setDateRef] = useState(new Date());
-  const [viewMode, setViewMode] = useState<ViewMode>("week");
+  const [viewMode, setViewMode] = useState<ViewMode>("3days");
   const [bons, setBons] = useState<BonTravail[]>([]);
   const [rdvs, setRdvs] = useState<RendezVous[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
@@ -233,7 +234,7 @@ export default function AgendaPage() {
         .order("date_creation"),
       supabase
         .from("rendezvous")
-        .select("id, client_id, vehicule_id, date_rdv, heure, heure_fin, titre, statut, notes, clients(id, nom, prenom)")
+        .select("id, client_id, vehicule_id, date_rdv, heure, heure_fin, titre, statut, notes, clients(id, nom, prenom), vehicules(id, marque, modele, plaque)")
         .order("date_rdv"),
       supabase.from("clients").select("id, nom, prenom").order("nom"),
       supabase.from("vehicules").select("id, client_id, marque, modele, plaque").order("marque"),
@@ -553,7 +554,7 @@ export default function AgendaPage() {
                       style={{ left: "50%" }}
                     />
 
-                    {/* Bons de travail (doré) — MOITIE DROITE — un bloc par segment chrono */}
+                    {/* Bons de travail (doré) — MOITIE DROITE — uniquement les segments chrono */}
                     {dayBons.map((bon) => {
                       const clientName = bon.clients
                         ? `${bon.clients.prenom} ${bon.clients.nom}`
@@ -562,91 +563,53 @@ export default function AgendaPage() {
                         ? `${bon.vehicules.marque} ${bon.vehicules.modele}`
                         : "";
 
-                      // Si chrono_segments existe et a des entrees, afficher un bloc par segment
+                      // Afficher UNIQUEMENT les segments chrono (temps réel chronométré)
                       const segments = bon.chrono_segments && bon.chrono_segments.length > 0
                         ? bon.chrono_segments.filter((seg) => seg.debut && seg.fin)
-                        : null;
+                        : [];
 
-                      if (segments) {
-                        return segments.map((seg, segIdx) => {
-                          const debut = heureEnMin(seg.debut) ?? HEURE_DEBUT * 60;
-                          const fin = heureEnMin(seg.fin) ?? debut + 30;
-                          const top = (debut - HEURE_DEBUT * 60) * PX_MIN;
-                          const haut = Math.max(20, (fin - debut) * PX_MIN);
+                      // Pas de segments chrono = rien dans "Réel"
+                      if (segments.length === 0) return null;
 
-                          return (
-                            <div
-                              key={`b-${bon.id}-s${segIdx}`}
-                              className="absolute rounded px-1 py-0.5 overflow-hidden cursor-pointer hover:opacity-90"
-                              style={{
-                                top: `${top}px`,
-                                height: `${haut}px`,
-                                left: "calc(50% + 2px)",
-                                right: "2px",
-                                background: "rgba(234,179,8,0.18)",
-                                borderLeft: "3px solid #eab308",
-                                fontSize: "10px",
-                                lineHeight: "1.3",
-                              }}
-                              title={`${clientName} — ${vehicleName}\n${seg.debut} - ${seg.fin}\n${bon.symptomes || ""}`}
-                              onClick={() => router.push(`/bons-travail?edit_id=${bon.id}`)}
-                            >
-                              <div className="font-semibold text-amber-800 truncate">
-                                {clientName}
+                      return segments.map((seg, segIdx) => {
+                        const debut = heureEnMin(seg.debut) ?? HEURE_DEBUT * 60;
+                        const fin = heureEnMin(seg.fin) ?? debut + 30;
+                        const top = (debut - HEURE_DEBUT * 60) * PX_MIN;
+                        const haut = Math.max(20, (fin - debut) * PX_MIN);
+
+                        return (
+                          <div
+                            key={`b-${bon.id}-s${segIdx}`}
+                            className="absolute rounded px-1 py-0.5 overflow-hidden cursor-pointer hover:opacity-90"
+                            style={{
+                              top: `${top}px`,
+                              height: `${haut}px`,
+                              left: "calc(50% + 2px)",
+                              right: "2px",
+                              background: "rgba(234,179,8,0.18)",
+                              borderLeft: "3px solid #eab308",
+                              fontSize: "10px",
+                              lineHeight: "1.3",
+                            }}
+                            title={`${clientName} — ${vehicleName}\n${seg.debut} - ${seg.fin}\n${bon.symptomes || ""}`}
+                            onClick={() => router.push(`/bons-travail?edit_id=${bon.id}`)}
+                          >
+                            <div className="font-semibold text-amber-800 truncate">
+                              {clientName}
+                            </div>
+                            {haut > 30 && (
+                              <div className="text-amber-500 truncate text-[10px]">
+                                {seg.debut} - {seg.fin}
                               </div>
-                              {haut > 30 && (
-                                <div className="text-amber-500 truncate text-[10px]">
-                                  {seg.debut} - {seg.fin}
-                                </div>
-                              )}
-                              {haut > 45 && vehicleName && (
-                                <div className="text-amber-600 truncate text-[10px]">
-                                  {vehicleName}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        });
-                      }
-
-                      // Fallback: pas de segments, afficher un seul bloc (ancien comportement)
-                      const debut = heureEnMin(bon.heure_debut) ?? HEURE_DEBUT * 60;
-                      const fin = heureEnMin(bon.heure_fin) ?? debut + 60;
-                      const top = (debut - HEURE_DEBUT * 60) * PX_MIN;
-                      const haut = Math.max(24, (fin - debut) * PX_MIN);
-
-                      return (
-                        <div
-                          key={`b-${bon.id}`}
-                          className="absolute rounded px-1 py-0.5 overflow-hidden cursor-pointer hover:opacity-90"
-                          style={{
-                            top: `${top}px`,
-                            height: `${haut}px`,
-                            left: "calc(50% + 2px)",
-                            right: "2px",
-                            background: "rgba(234,179,8,0.15)",
-                            borderLeft: "3px solid #eab308",
-                            fontSize: "10px",
-                            lineHeight: "1.3",
-                          }}
-                          title={`${clientName} — ${vehicleName}\n${bon.symptomes || ""}`}
-                          onClick={() => router.push(`/bons-travail?edit_id=${bon.id}`)}
-                        >
-                          <div className="font-semibold text-amber-800 truncate">
-                            {clientName}
+                            )}
+                            {haut > 45 && vehicleName && (
+                              <div className="text-amber-600 truncate text-[10px]">
+                                {vehicleName}
+                              </div>
+                            )}
                           </div>
-                          {haut > 35 && vehicleName && (
-                            <div className="text-amber-600 truncate text-[10px]">
-                              {vehicleName}
-                            </div>
-                          )}
-                          {haut > 50 && bon.symptomes && (
-                            <div className="text-amber-500 truncate text-[10px]">
-                              {bon.symptomes}
-                            </div>
-                          )}
-                        </div>
-                      );
+                        );
+                      });
                     })}
 
                     {/* Rendez-vous (bleu) — MOITIE GAUCHE — avec drag resize */}
@@ -659,6 +622,9 @@ export default function AgendaPage() {
                       const haut = Math.max(24, (finMin - debutMin) * PX_MIN);
                       const clientName = rdv.clients
                         ? `${rdv.clients.prenom} ${rdv.clients.nom}`
+                        : "";
+                      const vehicleName = rdv.vehicules
+                        ? `${rdv.vehicules.marque} ${rdv.vehicules.modele}`
                         : "";
 
                       return (
@@ -675,7 +641,7 @@ export default function AgendaPage() {
                             fontSize: "10px",
                             lineHeight: "1.3",
                           }}
-                          title={`${rdv.titre || "RDV"} (${rdv.heure || ""} - ${rdv.heure_fin || ""})\n${clientName}\n${rdv.notes || ""}`}
+                          title={`${rdv.titre || "RDV"} (${rdv.heure || ""} - ${rdv.heure_fin || ""})\n${clientName}${vehicleName ? ` — ${vehicleName}` : ""}\n${rdv.notes || ""}`}
                           onClick={() => {
                             if (!dragMoved.current) openEditRdv(rdv);
                           }}
@@ -695,15 +661,15 @@ export default function AgendaPage() {
 
                           <div className="px-1.5 pt-2.5 pb-2.5 pointer-events-none" style={{ position: "relative", zIndex: 1 }}>
                             <div className="font-semibold text-blue-800 truncate">
-                              {rdv.titre || "Rendez-vous"}
+                              {clientName || rdv.titre || "RDV"}
                             </div>
-                            {haut > 40 && clientName && (
+                            {vehicleName && (
                               <div className="text-blue-600 truncate text-[10px]">
-                                {clientName}
+                                {vehicleName}
                               </div>
                             )}
-                            {haut > 55 && (
-                              <div className="text-blue-500 truncate text-[10px]">
+                            {haut > 50 && (
+                              <div className="text-blue-400 truncate text-[10px]">
                                 {rdv.heure} - {rdv.heure_fin}
                               </div>
                             )}
@@ -780,16 +746,25 @@ export default function AgendaPage() {
                       </button>
                     )}
                   </div>
-                  {dayRdvs.map((rdv) => (
-                    <div
-                      key={`r-${rdv.id}`}
-                      className="text-[10px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded px-1 py-0.5 mb-0.5 truncate cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-900/50"
-                      onClick={() => openEditRdv(rdv)}
-                      title={`${rdv.titre} (${rdv.heure} - ${rdv.heure_fin})`}
-                    >
-                      {rdv.heure?.slice(0, 5)} {rdv.titre || "RDV"}
-                    </div>
-                  ))}
+                  {dayRdvs.map((rdv) => {
+                    const cName = rdv.clients
+                      ? `${rdv.clients.prenom} ${rdv.clients.nom}`
+                      : "";
+                    const vName = rdv.vehicules
+                      ? `${rdv.vehicules.marque} ${rdv.vehicules.modele}`
+                      : "";
+                    const label = cName || rdv.titre || "RDV";
+                    return (
+                      <div
+                        key={`r-${rdv.id}`}
+                        className="text-[10px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded px-1 py-0.5 mb-0.5 truncate cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-900/50"
+                        onClick={() => openEditRdv(rdv)}
+                        title={`${label} (${rdv.heure} - ${rdv.heure_fin})${vName ? ` — ${vName}` : ""}`}
+                      >
+                        {rdv.heure?.slice(0, 5)} {label}{vName ? ` — ${vName}` : ""}
+                      </div>
+                    );
+                  })}
                   {dayBons.map((bon) => {
                     const clientName = bon.clients
                       ? `${bon.clients.prenom} ${bon.clients.nom}`
@@ -821,22 +796,6 @@ export default function AgendaPage() {
             </h2>
 
             <form onSubmit={handleRdvSubmit} className="space-y-4">
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Titre *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ex: Changement huile, Inspection..."
-                  value={rdvForm.titre}
-                  onChange={(e) =>
-                    setRdvForm({ ...rdvForm, titre: e.target.value })
-                  }
-                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-              </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -957,41 +916,71 @@ export default function AgendaPage() {
                 />
               </div>
 
-              <div className="flex justify-between pt-2">
-                <div>
-                  {editingRdv && (
-                    <button
-                      type="button"
-                      onClick={handleRdvDelete}
-                      className="rounded-lg bg-red-50 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-100"
-                    >
-                      Supprimer
-                    </button>
-                  )}
-                </div>
-                <div className="flex gap-3">
+              <div className="flex flex-wrap items-center gap-2 pt-2">
+                {editingRdv && (
+                  <button
+                    type="button"
+                    onClick={handleRdvDelete}
+                    className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100"
+                  >
+                    Supprimer
+                  </button>
+                )}
+                {editingRdv && (
                   <button
                     type="button"
                     onClick={() => {
-                      setShowRdvForm(false);
-                      setEditingRdv(null);
+                      const params = new URLSearchParams();
+                      if (rdvForm.client_id) params.set("client_id", rdvForm.client_id);
+                      if (rdvForm.vehicule_id) params.set("vehicule_id", rdvForm.vehicule_id);
+                      router.push(`/bons-travail?${params.toString()}`);
                     }}
-                    className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                    className="rounded-lg bg-amber-50 dark:bg-amber-900/30 px-3 py-1.5 text-xs font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-200 dark:border-amber-800"
                   >
-                    Annuler
+                    Créer un bon
                   </button>
-                  <button
-                    type="submit"
-                    disabled={saving}
-                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-                  >
-                    {saving
-                      ? "..."
-                      : editingRdv
-                        ? "Enregistrer"
-                        : "Creer"}
-                  </button>
-                </div>
+                )}
+                {editingRdv && (() => {
+                  const bonActif = bons.find(
+                    (b) =>
+                      b.client_id === rdvForm.client_id &&
+                      b.vehicule_id === rdvForm.vehicule_id &&
+                      b.statut !== "complete" &&
+                      b.statut !== "annule"
+                  );
+                  if (!bonActif) return null;
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/bons-travail?edit_id=${bonActif.id}`)}
+                      className="rounded-lg bg-green-50 dark:bg-green-900/30 px-3 py-1.5 text-xs font-medium text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/50 border border-green-200 dark:border-green-800"
+                    >
+                      Ouvrir le bon actif
+                    </button>
+                  );
+                })()}
+                <div className="flex-1" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowRdvForm(false);
+                    setEditingRdv(null);
+                  }}
+                  className="rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="rounded-lg bg-blue-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {saving
+                    ? "..."
+                    : editingRdv
+                      ? "Enregistrer"
+                      : "Creer"}
+                </button>
               </div>
             </form>
           </div>
