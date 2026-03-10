@@ -144,6 +144,11 @@ function BonsTravailPage() {
       chronoElapsed.current +
       (chronoStartTs.current ? Date.now() - chronoStartTs.current : 0);
     setChronoDisplayMs(total);
+    // Mettre à jour heure_fin en temps réel
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, "0");
+    const mm = String(now.getMinutes()).padStart(2, "0");
+    setForm((prev) => ({ ...prev, heure_fin: `${hh}:${mm}` }));
   }, []);
 
   function nowHHMM(): string {
