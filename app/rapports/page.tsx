@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabase/client";
 
 /* ───── Types ───── */
 interface Client {
@@ -73,6 +73,7 @@ export default function RapportsPage() {
   const [customTo, setCustomTo] = useState("");
 
   async function fetchAll() {
+    const supabase = createClient();
     setLoading(true);
     const [fRes, cRes] = await Promise.all([
       supabase

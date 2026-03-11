@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabase/client";
 import { getClientDisplayName } from "@/lib/clientUtils";
 
 /* ───── Types ───── */
@@ -169,6 +169,7 @@ function BonsTravailPage() {
 
   function saveSegments(segs: ChronoSegment[], extra: Record<string, unknown> = {}) {
     if (editingBon) {
+      const supabase = createClient();
       supabase
         .from("bons_travail")
         .update({ chrono_segments: segs, ...extra })
@@ -269,6 +270,7 @@ function BonsTravailPage() {
 
   /* ── Fetch ── */
   async function fetchBons() {
+    const supabase = createClient();
     setLoading(true);
     const { data, error } = await supabase
       .from("bons_travail")
@@ -283,6 +285,7 @@ function BonsTravailPage() {
   }
 
   async function fetchClients() {
+    const supabase = createClient();
     const { data } = await supabase
       .from("clients")
       .select("id, nom, prenom, entreprise")
@@ -291,6 +294,7 @@ function BonsTravailPage() {
   }
 
   async function fetchVehicules() {
+    const supabase = createClient();
     const { data } = await supabase
       .from("vehicules")
       .select("id, marque, modele, annee, plaque, vin, moteur, lieu_fabrication")
@@ -374,6 +378,7 @@ function BonsTravailPage() {
   /* ── Submit ── */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const supabase = createClient();
     setSaving(true);
 
     const payload = {
@@ -411,6 +416,7 @@ function BonsTravailPage() {
 
   async function handleDelete(id: string) {
     if (!confirm("Supprimer ce bon de travail ?")) return;
+    const supabase = createClient();
     const { error } = await supabase
       .from("bons_travail")
       .delete()

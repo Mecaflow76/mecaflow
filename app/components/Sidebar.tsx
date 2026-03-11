@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 const navItems = [
   { href: "/clients", label: "Clients", icon: "👤" },
@@ -16,10 +17,18 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  }
 
   return (
     <aside className="flex h-screen w-60 flex-col border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 print:hidden">
@@ -52,7 +61,7 @@ export default function Sidebar() {
         </ul>
       </nav>
 
-      <div className="border-t border-gray-200 dark:border-gray-700 px-3 py-3">
+      <div className="border-t border-gray-200 dark:border-gray-700 px-3 py-3 space-y-1">
         {mounted && (
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -62,6 +71,13 @@ export default function Sidebar() {
             {theme === "dark" ? "Mode clair" : "Mode sombre"}
           </button>
         )}
+        <button
+          onClick={handleLogout}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+        >
+          <span className="text-base">🚪</span>
+          Deconnexion
+        </button>
       </div>
     </aside>
   );

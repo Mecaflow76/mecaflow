@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabase/client";
 import { getClientDisplayName } from "@/lib/clientUtils";
 
 /* ───── Types ───── */
@@ -145,6 +145,7 @@ function FacturesPage() {
   }, []);
 
   async function fetchFactures() {
+    const supabase = createClient();
     setLoading(true);
     const { data, error } = await supabase
       .from("factures")
@@ -158,6 +159,7 @@ function FacturesPage() {
   }
 
   async function fetchClients() {
+    const supabase = createClient();
     const { data } = await supabase
       .from("clients")
       .select("id, nom, prenom, entreprise, email, email2")
@@ -166,6 +168,7 @@ function FacturesPage() {
   }
 
   async function fetchVehicules() {
+    const supabase = createClient();
     const { data } = await supabase
       .from("vehicules")
       .select("id, marque, modele, plaque, client_id, vin, moteur, lieu_fabrication")
@@ -338,6 +341,7 @@ function FacturesPage() {
   /* ── Submit ── */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const supabase = createClient();
     setSaving(true);
 
     const t = calcTotals();
@@ -380,6 +384,7 @@ function FacturesPage() {
 
   async function handleDelete(id: string) {
     if (!confirm("Supprimer cette facture ?")) return;
+    const supabase = createClient();
     const { error } = await supabase.from("factures").delete().eq("id", id);
     if (error) setError(error.message);
     else fetchFactures();

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabase/client";
 import { getClientDisplayName } from "@/lib/clientUtils";
 
 interface Client {
@@ -82,6 +82,7 @@ export default function ClientsPage() {
   const [showClientInfo, setShowClientInfo] = useState(false);
 
   async function fetchVehicules() {
+    const supabase = createClient();
     const { data } = await supabase
       .from("vehicules")
       .select("*")
@@ -90,6 +91,7 @@ export default function ClientsPage() {
   }
 
   async function fetchClients() {
+    const supabase = createClient();
     setLoading(true);
     const { data, error } = await supabase
       .from("clients")
@@ -144,6 +146,7 @@ export default function ClientsPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const supabase = createClient();
     setSaving(true);
 
     if (editingClient) {
@@ -163,6 +166,7 @@ export default function ClientsPage() {
   }
 
   async function handleDelete(id: string) {
+    const supabase = createClient();
     const nbVeh = getClientVehicules(id).length;
     const msg = nbVeh > 0
       ? `Supprimer ce client ET ses ${nbVeh} véhicule(s), factures, bons de travail et rendez-vous associés ?\n\nCette action est irréversible.`

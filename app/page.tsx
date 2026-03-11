@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabase/client";
 
 interface Stats {
   clients: number;
@@ -21,6 +21,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   async function fetchStats() {
+    const supabase = createClient();
     const today = new Date().toISOString().split("T")[0];
 
     const [clientsRes, vehiculesRes, rdvRes, facturesRes] = await Promise.all([

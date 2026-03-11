@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabase/client";
 import { getClientDisplayName } from "@/lib/clientUtils";
 
 /* ───── Types ───── */
@@ -216,6 +216,7 @@ export default function AgendaPage() {
       return;
     }
 
+    const supabase = createClient();
     await supabase
       .from("rendezvous")
       .update({
@@ -228,6 +229,7 @@ export default function AgendaPage() {
   }
 
   async function fetchAll() {
+    const supabase = createClient();
     setLoading(true);
     const [bRes, rRes, cRes, vRes] = await Promise.all([
       supabase
@@ -368,6 +370,7 @@ export default function AgendaPage() {
 
   async function handleRdvSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const supabase = createClient();
     setSaving(true);
     const payload = {
       client_id: rdvForm.client_id || null,
@@ -393,6 +396,7 @@ export default function AgendaPage() {
   async function handleRdvDelete() {
     if (!editingRdv) return;
     if (!confirm("Supprimer ce rendez-vous ?")) return;
+    const supabase = createClient();
     await supabase.from("rendezvous").delete().eq("id", editingRdv.id);
     setShowRdvForm(false);
     setEditingRdv(null);

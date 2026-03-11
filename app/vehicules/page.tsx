@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabase/client";
 import { getClientDisplayName } from "@/lib/clientUtils";
 
 interface Client {
@@ -108,6 +108,7 @@ export default function VehiculesPage() {
   }
 
   async function fetchBons() {
+    const supabase = createClient();
     const { data } = await supabase
       .from("bons_travail")
       .select("id, vehicule_id, date_creation, statut, mecanicien, symptomes, diagnostic, travaux, chrono_ms")
@@ -116,6 +117,7 @@ export default function VehiculesPage() {
   }
 
   async function fetchVehicules() {
+    const supabase = createClient();
     setLoading(true);
     const { data, error } = await supabase
       .from("vehicules")
@@ -131,6 +133,7 @@ export default function VehiculesPage() {
   }
 
   async function fetchClients() {
+    const supabase = createClient();
     const { data } = await supabase
       .from("clients")
       .select("id, nom, prenom, entreprise")
@@ -202,6 +205,7 @@ export default function VehiculesPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const supabase = createClient();
     if (form.vin && form.vin.length !== 17) {
       setError("Le VIN doit contenir exactement 17 caracteres.");
       return;
@@ -239,6 +243,7 @@ export default function VehiculesPage() {
   }
 
   async function handleDelete(id: string) {
+    const supabase = createClient();
     const vBons = getVehiculeBons(id);
     const msg = vBons.length > 0
       ? `Supprimer ce véhicule ET ses ${vBons.length} bon(s) de travail, factures et rendez-vous associés ?\n\nCette action est irréversible.`
