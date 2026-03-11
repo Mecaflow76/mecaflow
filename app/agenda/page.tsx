@@ -3,12 +3,14 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import { getClientDisplayName } from "@/lib/clientUtils";
 
 /* ───── Types ───── */
 interface Client {
   id: string;
   nom: string;
   prenom: string;
+  entreprise?: string;
 }
 interface Vehicule {
   id: string;
@@ -230,13 +232,13 @@ export default function AgendaPage() {
     const [bRes, rRes, cRes, vRes] = await Promise.all([
       supabase
         .from("bons_travail")
-        .select("id, client_id, vehicule_id, date_creation, heure_debut, heure_fin, statut, mecanicien, symptomes, chrono_segments, clients(id, nom, prenom), vehicules(id, marque, modele, plaque)")
+        .select("id, client_id, vehicule_id, date_creation, heure_debut, heure_fin, statut, mecanicien, symptomes, chrono_segments, clients(id, nom, prenom, entreprise), vehicules(id, marque, modele, plaque)")
         .order("date_creation"),
       supabase
         .from("rendezvous")
-        .select("id, client_id, vehicule_id, date_rdv, heure, heure_fin, titre, statut, notes, clients(id, nom, prenom), vehicules(id, marque, modele, plaque)")
+        .select("id, client_id, vehicule_id, date_rdv, heure, heure_fin, titre, statut, notes, clients(id, nom, prenom, entreprise), vehicules(id, marque, modele, plaque)")
         .order("date_rdv"),
-      supabase.from("clients").select("id, nom, prenom").order("nom"),
+      supabase.from("clients").select("id, nom, prenom, entreprise").order("nom"),
       supabase.from("vehicules").select("id, client_id, marque, modele, plaque").order("marque"),
     ]);
     setBons((bRes.data as unknown as BonTravail[]) || []);
@@ -557,7 +559,7 @@ export default function AgendaPage() {
                     {/* Bons de travail (doré) — MOITIE DROITE — uniquement les segments chrono */}
                     {dayBons.map((bon) => {
                       const clientName = bon.clients
-                        ? `${bon.clients.prenom} ${bon.clients.nom}`
+                        ? getClientDisplayName(bon.clients)
                         : `Bon`;
                       const vehicleName = bon.vehicules
                         ? `${bon.vehicules.marque} ${bon.vehicules.modele}`
@@ -621,7 +623,7 @@ export default function AgendaPage() {
                       const top = (debutMin - HEURE_DEBUT * 60) * PX_MIN;
                       const haut = Math.max(24, (finMin - debutMin) * PX_MIN);
                       const clientName = rdv.clients
-                        ? `${rdv.clients.prenom} ${rdv.clients.nom}`
+                        ? getClientDisplayName(rdv.clients)
                         : "";
                       const vehicleName = rdv.vehicules
                         ? `${rdv.vehicules.marque} ${rdv.vehicules.modele}`
@@ -748,7 +750,7 @@ export default function AgendaPage() {
                   </div>
                   {dayRdvs.map((rdv) => {
                     const cName = rdv.clients
-                      ? `${rdv.clients.prenom} ${rdv.clients.nom}`
+                      ? getClientDisplayName(rdv.clients)
                       : "";
                     const vName = rdv.vehicules
                       ? `${rdv.vehicules.marque} ${rdv.vehicules.modele}`
@@ -767,7 +769,7 @@ export default function AgendaPage() {
                   })}
                   {dayBons.map((bon) => {
                     const clientName = bon.clients
-                      ? `${bon.clients.prenom} ${bon.clients.nom}`
+                      ? getClientDisplayName(bon.clients)
                       : "Bon";
                     return (
                       <div
@@ -811,7 +813,7 @@ export default function AgendaPage() {
                     <option value="">-- Aucun --</option>
                     {clients.map((c) => (
                       <option key={c.id} value={c.id}>
-                        {c.prenom} {c.nom}
+                        {getClientDisplayName(c)}
                       </option>
                     ))}
                   </select>

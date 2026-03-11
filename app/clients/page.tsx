@@ -3,11 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import { getClientDisplayName } from "@/lib/clientUtils";
 
 interface Client {
   id: string;
   nom: string;
   prenom: string;
+  entreprise: string;
   email: string;
   email2: string;
   telephone: string;
@@ -27,11 +29,13 @@ interface Vehicule {
   vin: string;
   kilometrage: number | null;
   couleur: string;
+  numero_unite: string;
 }
 
 const emptyForm = {
   nom: "",
   prenom: "",
+  entreprise: "",
   email: "",
   email2: "",
   telephone: "",
@@ -75,6 +79,7 @@ export default function ClientsPage() {
   const [vehicules, setVehicules] = useState<Vehicule[]>([]);
   // Modal vehicule picker
   const [pickedClient, setPickedClient] = useState<Client | null>(null);
+  const [showClientInfo, setShowClientInfo] = useState(false);
 
   async function fetchVehicules() {
     const { data } = await supabase
@@ -119,6 +124,7 @@ export default function ClientsPage() {
     setForm({
       nom: client.nom,
       prenom: client.prenom,
+      entreprise: client.entreprise || "",
       email: client.email,
       email2: client.email2 || "",
       telephone: client.telephone,
@@ -188,24 +194,33 @@ export default function ClientsPage() {
   // Ouvrir le modal de sélection véhicule (comme l'original HTML pickVehicle)
   function openVehiclePicker(client: Client) {
     setPickedClient(client);
+    setShowClientInfo(false);
   }
 
   function closeVehiclePicker() {
     setPickedClient(null);
+    setShowClientInfo(false);
   }
 
-  const filteredClients = clients.filter((client) => {
-    const term = search.toLowerCase();
-    return (
-      client.nom?.toLowerCase().includes(term) ||
-      client.prenom?.toLowerCase().includes(term) ||
-      client.email?.toLowerCase().includes(term) ||
-      client.email2?.toLowerCase().includes(term) ||
-      client.telephone?.includes(term) ||
-      client.telephone2?.includes(term) ||
-      client.ville?.toLowerCase().includes(term)
-    );
-  });
+  const filteredClients = clients
+    .filter((client) => {
+      const term = search.toLowerCase();
+      return (
+        client.nom?.toLowerCase().includes(term) ||
+        client.prenom?.toLowerCase().includes(term) ||
+        client.entreprise?.toLowerCase().includes(term) ||
+        client.email?.toLowerCase().includes(term) ||
+        client.email2?.toLowerCase().includes(term) ||
+        client.telephone?.includes(term) ||
+        client.telephone2?.includes(term) ||
+        client.ville?.toLowerCase().includes(term)
+      );
+    })
+    .sort((a, b) => {
+      const nameA = getClientDisplayName(a);
+      const nameB = getClientDisplayName(b);
+      return nameA.localeCompare(nameB, "fr-CA", { sensitivity: "base" });
+    });
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -272,8 +287,13 @@ export default function ClientsPage() {
                     >
                       <td className="px-6 py-4">
                         <div className="font-medium text-gray-900 dark:text-gray-100">
-                          {client.prenom} {client.nom}
+                          {getClientDisplayName(client)}
                         </div>
+                        {client.entreprise && (client.prenom || client.nom) && (
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            Contact: {client.prenom} {client.nom}
+                          </div>
+                        )}
                         {(client.email || client.email2) && (
                           <div className="text-xs text-gray-500 dark:text-gray-400">
                             {[client.email, client.email2].filter(Boolean).join(" | ")}
@@ -321,6 +341,21 @@ export default function ClientsPage() {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Entreprise <span className="text-gray-400 font-normal">(optionnel)</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Nom de l'entreprise"
+                  value={form.entreprise}
+                  onChange={(e) =>
+                    setForm({ ...form, entreprise: formatCapitalize(e.target.value) })
+                  }
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -493,7 +528,7 @@ export default function ClientsPage() {
             {/* Header */}
             <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Vehicules de {pickedClient.prenom} {pickedClient.nom}
+                Vehicules de {getClientDisplayName(pickedClient)}
               </h2>
               <button
                 onClick={closeVehiclePicker}
@@ -503,8 +538,55 @@ export default function ClientsPage() {
               </button>
             </div>
 
+            {/* Info client toggle */}
+            <div className="border-b border-gray-200 dark:border-gray-700">
+              <button
+                onClick={() => setShowClientInfo(!showClientInfo)}
+                className="w-full px-6 py-2.5 flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                <span className="text-xs">{showClientInfo ? "▼" : "▶"}</span>
+                👤 Info client
+              </button>
+              {showClientInfo && (
+                <div className="px-6 pb-4 grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                  {(pickedClient.telephone || pickedClient.telephone2) && (
+                    <div>
+                      <span className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase">Telephone</span>
+                      <div className="text-gray-900 dark:text-gray-100">{pickedClient.telephone || "—"}</div>
+                      {pickedClient.telephone2 && (
+                        <div className="text-gray-500 dark:text-gray-400 text-xs">{pickedClient.telephone2}</div>
+                      )}
+                    </div>
+                  )}
+                  {(pickedClient.email || pickedClient.email2) && (
+                    <div>
+                      <span className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase">Email</span>
+                      <div className="text-gray-900 dark:text-gray-100 break-all text-xs">{pickedClient.email || "—"}</div>
+                      {pickedClient.email2 && (
+                        <div className="text-gray-500 dark:text-gray-400 break-all text-xs">{pickedClient.email2}</div>
+                      )}
+                    </div>
+                  )}
+                  {(pickedClient.adresse || pickedClient.ville) && (
+                    <div className="col-span-2">
+                      <span className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase">Adresse</span>
+                      <div className="text-gray-900 dark:text-gray-100">
+                        {[pickedClient.adresse, pickedClient.ville, pickedClient.code_postal].filter(Boolean).join(", ")}
+                      </div>
+                    </div>
+                  )}
+                  {pickedClient.entreprise && (pickedClient.prenom || pickedClient.nom) && (
+                    <div className="col-span-2">
+                      <span className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase">Contact</span>
+                      <div className="text-gray-900 dark:text-gray-100">{pickedClient.prenom} {pickedClient.nom}</div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             {/* Body */}
-            <div className="px-6 py-5">
+            <div className="px-6 py-5 max-h-[70vh] overflow-y-auto">
               {getClientVehicules(pickedClient.id).length === 0 ? (
                 <div className="py-8 text-center">
                   <div className="text-4xl mb-3">🚗</div>
@@ -529,10 +611,15 @@ export default function ClientsPage() {
                             {v.annee ? v.annee + " " : ""}
                             {v.marque} {v.modele}
                           </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 flex-wrap">
                             {v.plaque && (
                               <span className="rounded bg-gray-200 dark:bg-gray-600 px-1.5 py-0.5 font-mono font-medium text-gray-700 dark:text-gray-300">
                                 {v.plaque}
+                              </span>
+                            )}
+                            {v.numero_unite && (
+                              <span className="rounded bg-blue-100 dark:bg-blue-900/30 px-1.5 py-0.5 font-medium text-blue-700 dark:text-blue-400">
+                                Unite: {v.numero_unite}
                               </span>
                             )}
                             {v.kilometrage && (

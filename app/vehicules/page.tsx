@@ -2,11 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { getClientDisplayName } from "@/lib/clientUtils";
 
 interface Client {
   id: string;
   nom: string;
   prenom: string;
+  entreprise?: string;
 }
 
 interface Vehicule {
@@ -21,6 +23,7 @@ interface Vehicule {
   lieu_fabrication: string;
   kilometrage: number | null;
   couleur: string;
+  numero_unite: string;
   clients?: Client;
 }
 
@@ -47,6 +50,7 @@ const emptyForm = {
   lieu_fabrication: "",
   kilometrage: "",
   couleur: "",
+  numero_unite: "",
 };
 
 export default function VehiculesPage() {
@@ -115,7 +119,7 @@ export default function VehiculesPage() {
     setLoading(true);
     const { data, error } = await supabase
       .from("vehicules")
-      .select("*, clients(id, nom, prenom)")
+      .select("*, clients(id, nom, prenom, entreprise)")
       .order("marque", { ascending: true });
 
     if (error) {
@@ -129,7 +133,7 @@ export default function VehiculesPage() {
   async function fetchClients() {
     const { data } = await supabase
       .from("clients")
-      .select("id, nom, prenom")
+      .select("id, nom, prenom, entreprise")
       .order("nom", { ascending: true });
     setClients(data || []);
   }
@@ -183,6 +187,7 @@ export default function VehiculesPage() {
       lieu_fabrication: v.lieu_fabrication || "",
       kilometrage: v.kilometrage?.toString() || "",
       couleur: v.couleur || "",
+      numero_unite: v.numero_unite || "",
     });
     setVinInfo(null);
     setShowForm(true);
@@ -214,6 +219,7 @@ export default function VehiculesPage() {
       lieu_fabrication: form.lieu_fabrication,
       kilometrage: form.kilometrage ? parseInt(form.kilometrage) : null,
       couleur: form.couleur,
+      numero_unite: form.numero_unite,
     };
 
     if (editingVehicule) {
@@ -256,13 +262,14 @@ export default function VehiculesPage() {
   const filteredVehicules = vehicules.filter((v) => {
     const term = search.toLowerCase();
     const clientName = v.clients
-      ? `${v.clients.nom} ${v.clients.prenom}`.toLowerCase()
+      ? getClientDisplayName(v.clients).toLowerCase()
       : "";
     return (
       v.marque?.toLowerCase().includes(term) ||
       v.modele?.toLowerCase().includes(term) ||
       v.plaque?.toLowerCase().includes(term) ||
       v.couleur?.toLowerCase().includes(term) ||
+      v.numero_unite?.toLowerCase().includes(term) ||
       clientName.includes(term)
     );
   });
@@ -317,9 +324,9 @@ export default function VehiculesPage() {
             <table className="w-full text-left text-sm">
               <thead className="bg-gray-50 dark:bg-gray-900 text-xs uppercase text-gray-500 dark:text-gray-400">
                 <tr>
-                  <th className="px-6 py-3">Marque / Modele</th>
+                  <th className="px-6 py-3">Vehicule</th>
+                  <th className="px-6 py-3">No unite</th>
                   <th className="px-6 py-3">No plaque</th>
-                  <th className="px-6 py-3">Annee</th>
                   <th className="px-6 py-3">Km</th>
                   <th className="px-6 py-3">Client</th>
                   <th className="px-6 py-3 text-right">Actions</th>
@@ -335,19 +342,28 @@ export default function VehiculesPage() {
                         className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
                         onClick={() => toggleExpand(v.id)}
                       >
-                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-100">
-                          <span className="mr-2 text-gray-400 dark:text-gray-500 text-xs">{isExpanded ? "▼" : "▶"}</span>
-                          {v.marque} {v.modele}
-                          {v.couleur && (
-                            <span className="ml-2 text-xs text-gray-400">
-                              — {v.couleur}
-                            </span>
+                        <td className="px-6 py-4">
+                          <div className="font-medium text-gray-900 dark:text-gray-100">
+                            <span className="mr-2 text-gray-400 dark:text-gray-500 text-xs">{isExpanded ? "▼" : "▶"}</span>
+                            {v.annee ? v.annee + " " : ""}{v.marque} {v.modele}
+                            {v.couleur && (
+                              <span className="ml-2 text-xs text-gray-400">
+                                — {v.couleur}
+                              </span>
+                            )}
+                          </div>
+                          {(v.moteur || v.lieu_fabrication) && (
+                            <div className="ml-5 mt-0.5 text-xs text-gray-400 dark:text-gray-500">
+                              {[v.moteur, v.lieu_fabrication].filter(Boolean).join(" · ")}
+                            </div>
                           )}
+                        </td>
+                        <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
+                          {v.numero_unite || "—"}
                         </td>
                         <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                           {v.plaque || "—"}
                         </td>
-                        <td className="px-6 py-4 text-gray-700 dark:text-gray-300">{v.annee}</td>
                         <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                           {v.kilometrage
                             ? `${v.kilometrage.toLocaleString("fr-FR")} km`
@@ -355,7 +371,7 @@ export default function VehiculesPage() {
                         </td>
                         <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                           {v.clients
-                            ? `${v.clients.nom} ${v.clients.prenom}`
+                            ? getClientDisplayName(v.clients)
                             : "—"}
                         </td>
                         <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
@@ -458,7 +474,7 @@ export default function VehiculesPage() {
                   <option value="">-- Selectionner un client --</option>
                   {clients.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.nom} {c.prenom}
+                      {getClientDisplayName(c)}
                     </option>
                   ))}
                 </select>
@@ -523,7 +539,7 @@ export default function VehiculesPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     No plaque
@@ -534,6 +550,20 @@ export default function VehiculesPage() {
                     value={form.plaque}
                     onChange={(e) =>
                       setForm({ ...form, plaque: e.target.value.toUpperCase() })
+                    }
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    No unite
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ex: U-01, #12..."
+                    value={form.numero_unite}
+                    onChange={(e) =>
+                      setForm({ ...form, numero_unite: e.target.value })
                     }
                     className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />

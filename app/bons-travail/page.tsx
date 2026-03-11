@@ -3,12 +3,14 @@
 import { Suspense, useEffect, useState, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import { getClientDisplayName } from "@/lib/clientUtils";
 
 /* ───── Types ───── */
 interface Client {
   id: string;
   nom: string;
   prenom: string;
+  entreprise?: string;
 }
 
 interface Vehicule {
@@ -271,7 +273,7 @@ function BonsTravailPage() {
     const { data, error } = await supabase
       .from("bons_travail")
       .select(
-        "*, chrono_segments, clients(id, nom, prenom), vehicules(id, marque, modele, annee, plaque, vin, moteur, lieu_fabrication)"
+        "*, chrono_segments, clients(id, nom, prenom, entreprise), vehicules(id, marque, modele, annee, plaque, vin, moteur, lieu_fabrication)"
       )
       .order("date_creation", { ascending: false });
 
@@ -283,7 +285,7 @@ function BonsTravailPage() {
   async function fetchClients() {
     const { data } = await supabase
       .from("clients")
-      .select("id, nom, prenom")
+      .select("id, nom, prenom, entreprise")
       .order("nom");
     setClients(data || []);
   }
@@ -450,7 +452,7 @@ function BonsTravailPage() {
 <h1>Bon de travail</h1>
 <div class="subtitle">Date : ${form.date_creation} | Statut : ${statutLabel}</div>
 <div class="grid">
-  <div class="field"><label>Client</label><span>${client ? `${client.nom} ${client.prenom}` : "—"}</span></div>
+  <div class="field"><label>Client</label><span>${client ? (client.entreprise || `${client.nom} ${client.prenom}`) : "—"}</span></div>
   <div class="field"><label>Vehicule</label><span>${vehicule ? `${vehicule.marque} ${vehicule.modele} ${vehicule.annee || ""} ${vehicule.plaque ? "— " + vehicule.plaque : ""}`.trim() : "—"}</span></div>
   <div class="field"><label>Mecanicien</label><span>${form.mecanicien || "—"}</span></div>
   <div class="field"><label>Km</label><span>${form.km || "—"}</span></div>
@@ -495,7 +497,7 @@ ${segmentsHtml}
   const filteredBons = bons.filter((bon) => {
     const term = search.toLowerCase();
     const clientName = bon.clients
-      ? `${bon.clients.nom} ${bon.clients.prenom}`.toLowerCase()
+      ? getClientDisplayName(bon.clients).toLowerCase()
       : "";
     const vehiculeName = bon.vehicules
       ? `${bon.vehicules.marque} ${bon.vehicules.modele}`.toLowerCase()
@@ -597,7 +599,7 @@ ${segmentsHtml}
                     </td>
                     <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                       {bon.clients
-                        ? `${bon.clients.nom} ${bon.clients.prenom}`
+                        ? getClientDisplayName(bon.clients)
                         : "\u2014"}
                     </td>
                     <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
@@ -673,7 +675,7 @@ ${segmentsHtml}
                     <option value="">-- Client --</option>
                     {clients.map((c) => (
                       <option key={c.id} value={c.id}>
-                        {c.nom} {c.prenom}
+                        {getClientDisplayName(c)}
                       </option>
                     ))}
                   </select>

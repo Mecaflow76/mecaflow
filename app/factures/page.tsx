@@ -3,12 +3,14 @@
 import { Suspense, useEffect, useState, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import { getClientDisplayName } from "@/lib/clientUtils";
 
 /* ───── Types ───── */
 interface Client {
   id: string;
   nom: string;
   prenom: string;
+  entreprise?: string;
   email?: string;
   email2?: string;
 }
@@ -147,7 +149,7 @@ function FacturesPage() {
     const { data, error } = await supabase
       .from("factures")
       .select(
-        "*, clients(id, nom, prenom, email), vehicules(id, marque, modele, plaque, vin, moteur, lieu_fabrication)"
+        "*, clients(id, nom, prenom, entreprise, email), vehicules(id, marque, modele, plaque, vin, moteur, lieu_fabrication)"
       )
       .order("date_facture", { ascending: false });
     if (error) setError(error.message);
@@ -158,7 +160,7 @@ function FacturesPage() {
   async function fetchClients() {
     const { data } = await supabase
       .from("clients")
-      .select("id, nom, prenom, email, email2")
+      .select("id, nom, prenom, entreprise, email, email2")
       .order("nom");
     setClients(data || []);
   }
@@ -400,7 +402,7 @@ function FacturesPage() {
   const filteredFactures = factures.filter((f) => {
     const term = search.toLowerCase();
     const clientName = f.clients
-      ? `${f.clients.nom} ${f.clients.prenom}`.toLowerCase()
+      ? getClientDisplayName(f.clients).toLowerCase()
       : "";
     return (
       clientName.includes(term) ||
@@ -489,7 +491,7 @@ function FacturesPage() {
                     </td>
                     <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
                       {f.clients
-                        ? `${f.clients.nom} ${f.clients.prenom}`
+                        ? getClientDisplayName(f.clients)
                         : "\u2014"}
                     </td>
                     <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
@@ -563,7 +565,7 @@ function FacturesPage() {
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                       <div>
                         <p style={{ margin: "0 0 3px", fontSize: "11px", textTransform: "uppercase", color: "#6b7280", fontWeight: 600 }}>Client</p>
-                        <p style={{ margin: 0, fontSize: "15px", fontWeight: 600 }}>{sc ? `${sc.prenom} ${sc.nom}` : "\u2014"}</p>
+                        <p style={{ margin: 0, fontSize: "15px", fontWeight: 600 }}>{sc ? getClientDisplayName(sc) : "\u2014"}</p>
                       </div>
                       {sv && (
                         <div>
@@ -599,7 +601,7 @@ function FacturesPage() {
                     <option value="">-- Client --</option>
                     {clients.map((c) => (
                       <option key={c.id} value={c.id}>
-                        {c.prenom} {c.nom}
+                        {getClientDisplayName(c)}
                       </option>
                     ))}
                   </select>
@@ -1193,7 +1195,7 @@ function FacturesPage() {
                       return (
                         <>
                           <p className="text-base font-medium text-blue-600 dark:text-blue-400">
-                            {c.prenom} {c.nom}
+                            {getClientDisplayName(c)}
                           </p>
                           {emails.map((em, i) => (
                             <p key={i} className="text-sm text-blue-500 dark:text-blue-300">
