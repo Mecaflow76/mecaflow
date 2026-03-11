@@ -18,13 +18,18 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  // Network-first strategy: always try network, fall back to cache
   if (event.request.method !== "GET") return;
 
+  const url = new URL(event.request.url);
+
+  // Never cache Supabase API/auth calls (sensitive data)
+  if (url.hostname.includes("supabase")) return;
+  if (url.pathname.startsWith("/auth/") || url.pathname.startsWith("/rest/")) return;
+
+  // Network-first strategy for app assets only
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Cache successful responses
         if (response.ok) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
@@ -34,7 +39,6 @@ self.addEventListener("fetch", (event) => {
         return response;
       })
       .catch(() => {
-        // If offline, try cache
         return caches.match(event.request);
       })
   );

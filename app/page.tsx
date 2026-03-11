@@ -21,29 +21,34 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   async function fetchStats() {
-    const supabase = createClient();
-    const today = new Date().toISOString().split("T")[0];
+    try {
+      const supabase = createClient();
+      const today = new Date().toISOString().split("T")[0];
 
-    const [clientsRes, vehiculesRes, rdvRes, facturesRes] = await Promise.all([
-      supabase.from("clients").select("id", { count: "exact", head: true }),
-      supabase.from("vehicules").select("id", { count: "exact", head: true }),
-      supabase
-        .from("rendezvous")
-        .select("id", { count: "exact", head: true })
-        .eq("date_rdv", today),
-      supabase
-        .from("factures")
-        .select("id", { count: "exact", head: true })
-        .in("statut", ["envoyee", "en_retard"]),
-    ]);
+      const [clientsRes, vehiculesRes, rdvRes, facturesRes] = await Promise.all([
+        supabase.from("clients").select("id", { count: "exact", head: true }),
+        supabase.from("vehicules").select("id", { count: "exact", head: true }),
+        supabase
+          .from("rendezvous")
+          .select("id", { count: "exact", head: true })
+          .eq("date_rdv", today),
+        supabase
+          .from("factures")
+          .select("id", { count: "exact", head: true })
+          .in("statut", ["envoyee", "en_retard"]),
+      ]);
 
-    setStats({
-      clients: clientsRes.count || 0,
-      vehicules: vehiculesRes.count || 0,
-      rdvAujourdhui: rdvRes.count || 0,
-      facturesImpayees: facturesRes.count || 0,
-    });
-    setLoading(false);
+      setStats({
+        clients: clientsRes.count || 0,
+        vehicules: vehiculesRes.count || 0,
+        rdvAujourdhui: rdvRes.count || 0,
+        facturesImpayees: facturesRes.count || 0,
+      });
+    } catch {
+      // silently fall back to zeros
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -68,7 +73,7 @@ export default function DashboardPage() {
     {
       label: "RDV aujourd'hui",
       value: stats.rdvAujourdhui,
-      href: "/rendez-vous",
+      href: "/agenda",
       color: "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400",
       icon: "📅",
     },
