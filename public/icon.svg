@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#2563eb"/>
+  <text x="256" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="120" font-weight="bold" fill="white">Meca</text>
+  <text x="256" y="340" text-anchor="middle" font-family="Arial, sans-serif" font-size="120" font-weight="bold" fill="white">Flow</text>
+  <circle cx="256" cy="420" r="30" fill="none" stroke="white" stroke-width="8"/>
+  <path d="M226 420 h60 M256 390 v60" stroke="white" stroke-width="8" stroke-linecap="round"/>
+</svg>
