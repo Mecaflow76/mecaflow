@@ -23,9 +23,9 @@ export default function AuthLayout({
   }
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen">
       <Sidebar />
-      <main className="flex-1 overflow-auto">{children}</main>
+      <main className="flex-1 overflow-auto pt-16 md:pt-0">{children}</main>
     </div>
   );
 }
