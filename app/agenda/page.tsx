@@ -70,7 +70,7 @@ const RDV_STATUTS = [
   { value: "annule", label: "Annule" },
 ];
 
-type ViewMode = "3days" | "week" | "month";
+type ViewMode = "day" | "3days" | "week" | "month";
 
 /* ───── Helpers ───── */
 function heureEnMin(h: string | null): number | null {
@@ -256,6 +256,11 @@ export default function AgendaPage() {
 
   /* ── Navigation ── */
   const visibleDays = useMemo(() => {
+    if (viewMode === "day") {
+      const start = new Date(dateRef);
+      start.setHours(0, 0, 0, 0);
+      return [start];
+    }
     if (viewMode === "3days") {
       const start = new Date(dateRef);
       start.setHours(0, 0, 0, 0);
@@ -293,11 +298,16 @@ export default function AgendaPage() {
   }, [dateRef, viewMode]);
 
   const today = formatDateStr(new Date());
-  const colCount = viewMode === "3days" ? 3 : 7;
+  const colCount = viewMode === "day" ? 1 : viewMode === "3days" ? 3 : 7;
 
   const titre = useMemo(() => {
     if (viewMode === "month") {
       return `${MOIS[dateRef.getMonth()]} ${dateRef.getFullYear()}`;
+    }
+    if (viewMode === "day") {
+      const d = visibleDays[0];
+      if (!d) return "";
+      return `${getDayName(d)} ${d.getDate()} ${MOIS[d.getMonth()]} ${d.getFullYear()}`;
     }
     const days = visibleDays;
     if (days.length === 0) return "";
@@ -311,14 +321,16 @@ export default function AgendaPage() {
   }
   function goPrev() {
     const d = new Date(dateRef);
-    if (viewMode === "3days") d.setDate(d.getDate() - 3);
+    if (viewMode === "day") d.setDate(d.getDate() - 1);
+    else if (viewMode === "3days") d.setDate(d.getDate() - 3);
     else if (viewMode === "week") d.setDate(d.getDate() - 7);
     else d.setMonth(d.getMonth() - 1);
     setDateRef(d);
   }
   function goNext() {
     const d = new Date(dateRef);
-    if (viewMode === "3days") d.setDate(d.getDate() + 3);
+    if (viewMode === "day") d.setDate(d.getDate() + 1);
+    else if (viewMode === "3days") d.setDate(d.getDate() + 3);
     else if (viewMode === "week") d.setDate(d.getDate() + 7);
     else d.setMonth(d.getMonth() + 1);
     setDateRef(d);
@@ -433,6 +445,7 @@ export default function AgendaPage() {
 
         <div className="flex gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-0.5">
           {([
+            { key: "day" as ViewMode, label: "1 jour" },
             { key: "3days" as ViewMode, label: "3 jours" },
             { key: "week" as ViewMode, label: "Semaine" },
             { key: "month" as ViewMode, label: "Mois" },
