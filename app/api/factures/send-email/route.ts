@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
 
     /* ── 5. Envoyer via Resend ── */
     const { error: sendError } = await resend.emails.send({
-      from: "Garage Lagarde <factures@garagelagarde.ca>",
+      from: "Garage Lagarde <facturation@garagelagarde.ca>",
       to: emailList,
       subject: `Facture — Garage Lagarde — ${facture.date_facture}`,
       html,

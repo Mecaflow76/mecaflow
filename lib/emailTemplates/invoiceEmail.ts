@@ -145,7 +145,7 @@ export function buildInvoiceEmailHtml(data: InvoiceEmailData): string {
               <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;letter-spacing:1px;">GARAGE LAGARDE</h1>
               <p style="margin:8px 0 0;color:#93c5fd;font-size:13px;">
                 2232 Rang Des Continuations, St-Jacques, QC J0K 2R0<br>
-                (450) 750-6862 — garagelagarde@outlook.com
+                (450) 750-6862 — facturation@garagelagarde.ca
               </p>
             </td>
           </tr>
@@ -265,7 +265,7 @@ export function buildInvoiceEmailHtml(data: InvoiceEmailData): string {
             <td style="background:#f9fafb;padding:20px 32px;text-align:center;border-top:1px solid #e5e7eb;">
               <p style="margin:0 0 4px;font-weight:600;color:#374151;">Merci de votre confiance!</p>
               <p style="margin:0;font-size:13px;color:#6b7280;">
-                Garage Lagarde — (450) 750-6862 — garagelagarde@outlook.com
+                Garage Lagarde — (450) 750-6862 — facturation@garagelagarde.ca
               </p>
             </td>
           </tr>

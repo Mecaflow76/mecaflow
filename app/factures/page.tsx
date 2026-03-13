@@ -547,7 +547,7 @@ function FacturesPage() {
                 <h1 style={{ margin: 0, color: "#ffffff", fontSize: "22px", fontWeight: 700, letterSpacing: "1px" }}>GARAGE LAGARDE</h1>
                 <p style={{ margin: "6px 0 0", color: "#93c5fd", fontSize: "12px" }}>
                   2232 Rang Des Continuations, St-Jacques, QC J0K 2R0<br />
-                  (450) 750-6862 — garagelagarde@outlook.com
+                  (450) 750-6862 — facturation@garagelagarde.ca
                 </p>
               </div>
               {/* Bande FACTURE bleue */}
@@ -1119,7 +1119,7 @@ function FacturesPage() {
               <div className="hidden print:block print-footer-pro" style={{ marginTop: "24px", background: "#f9fafb", padding: "16px 24px", textAlign: "center", borderTop: "1px solid #e5e7eb", borderRadius: "0 0 8px 8px" }}>
                 <p style={{ margin: "0 0 4px", fontWeight: 600, color: "#374151", fontSize: "14px" }}>Merci de votre confiance!</p>
                 <p style={{ margin: 0, fontSize: "12px", color: "#6b7280" }}>
-                  Garage Lagarde — (450) 750-6862 — garagelagarde@outlook.com
+                  Garage Lagarde — (450) 750-6862 — facturation@garagelagarde.ca
                 </p>
               </div>
 
